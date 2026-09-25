@@ -12,8 +12,8 @@
 
       /* Fluid containers */
       .container,.card,form,main,aside,header,footer,section{width:100%;max-width:100%;box-sizing:border-box}
-      .container{max-width:1200px;margin:16px auto;padding:12px}
-      .card{background:var(--card);border-radius:14px;box-shadow:0 10px 20px rgba(15,23,42,.08);padding:14px}
+      .container{max-width:1200px;margin:16px auto;padding:12px;display:flex;justify-content:center}
+      .card{background:var(--card);border-radius:14px;box-shadow:0 10px 20px rgba(15,23,42,.08);padding:14px;margin:0 auto;max-width:980px}
 
       /* Layout */
       .content{display:grid;grid-template-columns:1.6fr .9fr;gap:12px;width:100%}
@@ -72,6 +72,11 @@
         .form-grid{gap:8px}
         #settingsMenu{left:8px;right:8px}
       }
+      /* Tabs */
+      .tabs{display:flex;gap:8px;align-items:center}
+      .tab-btn.active{background:var(--primary);color:#fff;border-color:transparent}
+      .tab-panel{display:block}
+      .tab-panel[hidden]{display:none}
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
@@ -79,9 +84,13 @@
     <div class="container">
       <div class="card">
         <div class="topbar">
-          <div class="left">
+          <div class="left" style="align-items:center;display:flex;gap:12px">
             <h1 style="margin:0">筋トレ日記</h1>
-            <a href="calendar.html" class="small-btn" style="text-decoration:none;padding:8px 10px">カレンダー</a>
+            <div class="tabs" role="tablist" aria-label="メインタブ">
+              <button class="small-btn tab-btn active" data-tab="records">記録</button>
+              <button class="small-btn tab-btn" data-tab="calendar">カレンダー</button>
+              <button class="small-btn tab-btn" data-tab="timer">タイマー</button>
+            </div>
           </div>
           <div class="right">
             <div id="totalCount" style="background:#eff6ff;padding:8px 12px;border-radius:8px;font-weight:700">記録日数: 0</div>
@@ -99,6 +108,8 @@
 
         <div class="content">
           <main>
+            <!-- Tab panels -->
+            <section id="records" class="tab-panel">
             <form id="logForm">
               <div class="form-grid">
                 <input type="hidden" id="date" required>
@@ -129,34 +140,51 @@
               </div>
             </form>
 
-            <ul id="entries" class="entries"></ul>
+              <ul id="entries" class="entries"></ul>
+            </section>
+
+            <section id="calendar" class="tab-panel" hidden>
+              <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <div style="font-weight:700">カレンダー</div>
+                  <div id="monthLabel" style="color:var(--muted)"></div>
+                </div>
+                <div id="calendar" class="calendar" style="margin-top:12px"></div>
+                <div style="margin-top:12px">
+                  <h3 style="margin:6px 0">その日の記録</h3>
+                  <div id="selectedEntries"></div>
+                </div>
+              </div>
+            </section>
+
+            <section id="timer" class="tab-panel" hidden>
+              <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <div style="font-weight:700">レストタイマー</div>
+                  <div style="font-size:.85rem;color:var(--muted)">バックグラウンド対応</div>
+                </div>
+                <div id="timerDisplay" class="timer-display">01:30</div>
+                <div class="timer-controls">
+                  <button id="timerStartBtn" class="timer-btn">開始</button>
+                  <button id="timerStopBtn" class="timer-btn" disabled>一時停止</button>
+                  <button id="timerResetBtn" class="timer-btn">リセット</button>
+                </div>
+                <div style="display:flex;gap:8px;margin-top:8px;justify-content:center;flex-wrap:wrap">
+                  <input id="customTimerInput" type="number" min="0" max="3600" value="90" style="width:84px;padding:6px;border-radius:8px;border:none;text-align:center" />
+                  <button id="customTimerBtn" class="timer-btn">セット(秒)</button>
+                </div>
+                <div style="display:flex;justify-content:center;gap:8px;margin-top:8px">
+                  <button id="audioUnlockBtn" class="small-btn">サウンドを有効にする</button>
+                  <button id="stopAlarmBtn" class="small-btn">アラーム停止</button>
+                </div>
+              </div>
+            </section>
           </main>
 
           <aside class="sidebar">
-            <div id="sidebarCalendarContainer" style="margin-bottom:12px">
+            <div class="card" style="padding:12px">
               <div id="miniCalendar" class="mini-calendar"></div>
             </div>
-
-            <div class="timer-panel">
-              <div style="display:flex;justify-content:space-between;align-items:center">
-                <div style="font-weight:700">レストタイマー</div>
-                <div style="font-size:.85rem;color:rgba(255,255,255,0.8)">バックグラウンド対応</div>
-              </div>
-              <div id="timerDisplay" class="timer-display">01:30</div>
-              <div class="timer-controls">
-                <button id="timerStartBtn" class="timer-btn">開始</button>
-                <button id="timerStopBtn" class="timer-btn" disabled>一時停止</button>
-                <button id="timerResetBtn" class="timer-btn">リセット</button>
-              </div>
-              <div style="display:flex;gap:8px;margin-top:8px;justify-content:center;flex-wrap:wrap">
-                <input id="customTimerInput" type="number" min="0" max="3600" value="90" style="width:84px;padding:6px;border-radius:8px;border:none;text-align:center" />
-                <button id="customTimerBtn" class="timer-btn">セット(秒)</button>
-              </div>
-            </div>
-
-            <hr style="margin:12px 0;border:none;border-top:1px solid #eef2ff">
-            <h3 style="margin:6px 0">その日の記録</h3>
-            <div id="selectedEntries"></div>
           </aside>
         </div>
       </div>
@@ -382,10 +410,21 @@
       // initialize UI
       const dateElem = el('date'); if(dateElem) dateElem.value = new Date().toISOString().slice(0,10);
       const migrated = migrateLegacyEntries(); renderEntriesList(); renderCalendar(); renderMiniCalendar(dateElem? dateElem.value : null); buildExerciseList();
+      // Tab switching: show/hide panels and run panel-specific refresh
+      function switchToTab(name){ const tabs = Array.from(document.querySelectorAll('.tab-btn')); tabs.forEach(t=>{ t.classList.toggle('active', t.dataset.tab===name); t.setAttribute('aria-selected', String(t.dataset.tab===name)); });
+        const panels = Array.from(document.querySelectorAll('.tab-panel')); panels.forEach(p=>{ if(p.id===name) p.removeAttribute('hidden'); else p.setAttribute('hidden',''); });
+        // panel-specific actions
+        if(name==='calendar'){ renderCalendar(); renderSelectedEntries(); }
+        if(name==='records'){ renderEntriesList(); renderMiniCalendar(el('date')? el('date').value : null); }
+        if(name==='timer'){ refreshTimerUI(); resumeTimerIfNeeded(); }
+      }
+      Array.from(document.querySelectorAll('.tab-btn')).forEach(btn=>{ btn.addEventListener('click', ()=>{ switchToTab(btn.dataset.tab); }); btn.setAttribute('role','tab'); });
       // autosave and draft already wired
 
-      // add audio unlock/stop buttons to timer panel
-      const tpanel = document.querySelector('.timer-panel'); if(tpanel){ const btn = document.createElement('button'); btn.id='audioUnlockBtn'; btn.type='button'; btn.className='small-btn'; btn.style.marginTop='8px'; btn.textContent='サウンドを有効にする'; btn.addEventListener('click', ()=>{ unlockAudio(); }); tpanel.appendChild(btn); const stopBtn = document.createElement('button'); stopBtn.id='stopAlarmBtn'; stopBtn.type='button'; stopBtn.className='small-btn'; stopBtn.style.marginTop='8px'; stopBtn.style.marginLeft='8px'; stopBtn.textContent='アラーム停止'; stopBtn.addEventListener('click', ()=>{ stopAlarmSound(); }); tpanel.appendChild(stopBtn); }
+      // ensure audio buttons exist (moved into timer tab); wire if absent
+      if(!el('audioUnlockBtn')){
+        const tb = document.createElement('button'); tb.id='audioUnlockBtn'; tb.type='button'; tb.className='small-btn'; tb.textContent='サウンドを有効にする'; tb.addEventListener('click', ()=>{ unlockAudio(); }); const stopBtn = document.createElement('button'); stopBtn.id='stopAlarmBtn'; stopBtn.type='button'; stopBtn.className='small-btn'; stopBtn.textContent='アラーム停止'; stopBtn.addEventListener('click', ()=>{ stopAlarmSound(); }); const parent = el('timer'); if(parent){ parent.querySelector('.card')?.appendChild(document.createElement('div')).style.display='none'; parent.querySelector('.card')?.appendChild(tb); parent.querySelector('.card')?.appendChild(stopBtn); }
+      }
 
       // resume when visible
       window.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible') resumeTimerIfNeeded(); });
