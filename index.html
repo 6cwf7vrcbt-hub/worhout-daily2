@@ -7,7 +7,9 @@
     <style>
       :root{--bg:#f5f7fb;--card:#fff;--primary:#1d4ed8;--muted:#64748b;--text:#1f2937}
       *{box-sizing:border-box}
-      body{margin:0;background:linear-gradient(135deg,#eef6ff 0%,#f8fafc 100%);font-family:Segoe UI, Hiragino Sans, "Yu Gothic", sans-serif;color:var(--text)}
+      body{margin:0;background:linear-gradient(135deg,#eef6ff 0%,#f8fafc 100%);font-family:Segoe UI, Hiragino Sans, "Yu Gothic", sans-serif;color:var(--text);-webkit-text-size-adjust:100%;}
+      /* prevent horizontal scrolling on small devices */
+      html,body{overflow-x:hidden}
       .container{max-width:1200px;margin:28px auto;padding:18px}
       .card{background:var(--card);border-radius:20px;box-shadow:0 12px 28px rgba(15,23,42,.12);padding:20px}
       .content{display:grid;grid-template-columns:1.6fr .9fr;gap:18px}
@@ -43,6 +45,11 @@
       .timer-controls{display:flex;gap:8px;justify-content:center}
       .timer-btn{background:#fff0; border:1px solid rgba(255,255,255,0.12);color:#fff;padding:6px 10px;border-radius:8px;cursor:pointer}
       .cal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+      /* topbar/header responsive helpers */
+      .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+      .topbar .left{display:flex;align-items:center;gap:12px}
+      .topbar .right{display:flex;gap:8px;align-items:center;position:relative}
+      #settingsMenu{display:none;position:absolute;right:0;top:calc(100% + 6px);background:#fff;border:1px solid #e6eefc;border-radius:8px;padding:10px;box-shadow:0 8px 24px rgba(15,23,42,.12);z-index:40;min-width:200px;max-width:90vw;box-sizing:border-box}
       .nav-btn{background:#fff;border:1px solid #e2e8f0;padding:6px 8px;border-radius:8px;cursor:pointer}
       .month-label{font-weight:700}
       .day-labels{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:6px}
@@ -76,6 +83,8 @@
         .entry{padding:12px}
         .sidebar{padding:10px}
         #exportControls{flex-wrap:wrap}
+        /* ensure settings menu stays within viewport on small screens */
+        #settingsMenu{right:8px;left:auto;top:calc(100% + 8px);}
       }
       @media(max-width:380px){
         .form-grid{grid-template-columns:1fr}
@@ -87,19 +96,21 @@
     <div class="container">
       <div class="card">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <div style="display:flex;align-items:center;gap:12px">
-            <h1 style="margin:0">筋トレ日記</h1>
-            <a href="calendar.html" class="small-btn" style="text-decoration:none;padding:8px 10px">カレンダー</a>
-          </div>
-          <div style="display:flex;gap:8px;align-items:center">
-            <div id="totalCount" style="background:#eff6ff;padding:8px 12px;border-radius:8px;font-weight:700">記録日数: 0</div>
-            <button id="settingsBtn" class="small-btn" title="設定" aria-label="設定" style="font-size:1.1rem">⚙</button>
-            <div id="settingsMenu" style="display:none;position:absolute;right:26px;top:64px;background:#fff;border:1px solid #e6eefc;border-radius:8px;padding:10px;box-shadow:0 8px 24px rgba(15,23,42,.12);z-index:40">
-              <div style="display:flex;flex-direction:column;gap:8px;min-width:200px">
-                <button id="exportJsonBtn" class="small-btn">JSONエクスポート</button>
-                <button id="exportCsvBtn" class="small-btn">CSVエクスポート</button>
-                <label class="small-btn" style="display:inline-flex;align-items:center;gap:6px;padding:6px 8px;cursor:pointer">インポート<input id="importFile" type="file" accept=".json,.csv" style="display:none" /></label>
-                <button id="clearAllBtn" class="small-btn" style="background:#fff;color:#ef4444;border-color:#fecaca">全データ削除</button>
+          <div class="topbar">
+            <div class="left">
+              <h1 style="margin:0">筋トレ日記</h1>
+              <a href="calendar.html" class="small-btn" style="text-decoration:none;padding:8px 10px">カレンダー</a>
+            </div>
+            <div class="right">
+              <div id="totalCount" style="background:#eff6ff;padding:8px 12px;border-radius:8px;font-weight:700">記録日数: 0</div>
+              <button id="settingsBtn" class="small-btn" title="設定" aria-label="設定" style="font-size:1.1rem">⚙</button>
+              <div id="settingsMenu">
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <button id="exportJsonBtn" class="small-btn">JSONエクスポート</button>
+                  <button id="exportCsvBtn" class="small-btn">CSVエクスポート</button>
+                  <label class="small-btn" style="display:inline-flex;align-items:center;gap:6px;padding:6px 8px;cursor:pointer">インポート<input id="importFile" type="file" accept=".json,.csv" style="display:none" /></label>
+                  <button id="clearAllBtn" class="small-btn" style="background:#fff;color:#ef4444;border-color:#fecaca">全データ削除</button>
+                </div>
               </div>
             </div>
           </div>
