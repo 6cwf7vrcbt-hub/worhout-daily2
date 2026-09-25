@@ -5,91 +5,80 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>筋トレ日記</title>
   <style>
-    :root{--bg:#f5f7fb;--card:#fff;--primary:#1d4ed8;--muted:#64748b;--text:#0f172a}
+    /* Mobile-first, single-column layout */
+    :root{--bg:#f5f7fb;--card:#fff;--accent:#1d4ed8;--muted:#64748b;--text:#0f172a}
     *{box-sizing:border-box}
-    html,body{height:100%;margin:0;padding:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;color:var(--text);-webkit-text-size-adjust:100%}
+    html,body{height:100%;margin:0;padding:0;overflow-x:hidden;background:var(--bg);font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;color:var(--text)}
 
-    /* Centered container */
-    .app-wrap{min-height:100%;display:flex;align-items:flex-start;justify-content:center;padding:18px}
-    .card{width:100%;max-width:980px;background:var(--card);border-radius:14px;box-shadow:0 10px 24px rgba(2,6,23,.08);padding:14px}
+    /* Card container centered, max-width 480px */
+    .app{min-height:100%;display:flex;align-items:flex-start;justify-content:center;padding:16px}
+    .card{width:100%;max-width:480px;margin:0 auto;padding:16px;background:var(--card);border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,.06);box-sizing:border-box}
 
-    /* Header with stacked title + tabs */
-    .header{display:flex;flex-direction:column;gap:10px}
-    .title{font-size:1.2rem;font-weight:800;margin:0}
+    /* Header: title above, tabs below */
+    .header{display:flex;flex-direction:column;gap:8px}
+    .title{margin:0;font-size:1.15rem;font-weight:800}
     .tabs{display:flex;gap:8px}
-    .tab-btn{flex:1;padding:8px 12px;border-radius:10px;border:1px solid #e6eefc;background:#fff;color:var(--text);cursor:pointer;white-space:nowrap;font-weight:700;text-align:center}
-    .tab-btn:focus{outline:3px solid rgba(29,78,216,.12)}
-    .tab-btn.active{background:var(--primary);color:#fff;border-color:transparent}
+    .tab-btn{flex:1;padding:8px 12px;border-radius:10px;border:1px solid #e6eefc;background:#fff;color:var(--text);font-weight:700;cursor:pointer;white-space:nowrap;text-align:center}
+    .tab-btn.active{background:var(--accent);color:#fff;border-color:transparent}
 
-    /* Responsive: keep header compact on small screens */
-    @media (max-width:430px){
-      .card{padding:12px}
-      .title{font-size:1.05rem}
-      .tab-btn{padding:8px 10px;font-size:0.95rem}
-    }
+    /* Ensure form is single column on mobile */
+    form{display:flex;flex-direction:column;gap:10px}
+    label{display:flex;flex-direction:column;gap:6px;font-size:0.95rem}
+    input,select,textarea,button{font:inherit}
+    input,select,textarea{width:100%;box-sizing:border-box;padding:10px;border:1px solid #e6eefc;border-radius:8px;background:#fff}
+    textarea{min-height:88px}
 
-    /* Main layout */
-    .main-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px}
-    @media(min-width:900px){.main-grid{grid-template-columns:1.6fr .9fr}}
+    /* Buttons wrap and flow */
+    .actions{display:flex;flex-wrap:wrap;gap:8px}
+    .submit-btn{background:var(--accent);color:#fff;border:none;padding:10px 12px;border-radius:8px;font-weight:700;flex:0 1 auto}
+    .muted{color:var(--muted)}
 
     /* Panels */
     .panel{display:none}
     .panel.active{display:block}
 
-    /* Form and entries */
-    form{display:flex;flex-direction:column;gap:10px}
-    .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
-    input,textarea,select,button{font:inherit}
-    input,textarea{padding:10px;border-radius:10px;border:1px solid #e6eefc;background:#fff}
-    textarea{min-height:80px}
-    .actions{display:flex;gap:8px;flex-wrap:wrap}
-    .submit-btn{background:var(--primary);color:#fff;border:none;padding:10px 14px;border-radius:10px;font-weight:700}
+    /* Calendar mini grid */
+    .mini-calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:8px}
+    .mini-day{background:#fff;border-radius:6px;padding:6px;text-align:center;border:1px solid #eef2ff;min-height:44px;font-size:0.85rem}
 
-    /* Sidebar */
-    .sidebar{background:#fafbff;border:1px solid #eef2ff;padding:10px;border-radius:10px}
-    .mini-calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
-    .mini-day{background:#fff;border-radius:8px;padding:6px;text-align:center;font-size:0.85rem;border:1px solid #eef2ff;min-height:44px}
-
-    /* Timer styles */
-    .timer-card{background:linear-gradient(135deg,#0f172a,#374151);color:#fff;padding:12px;border-radius:10px;text-align:center}
-    .timer-display{font-size:1.6rem;font-weight:800}
-    .timer-controls{display:flex;gap:8px;justify-content:center;margin-top:8px}
-    .timer-btn{padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#fff;cursor:pointer}
+    /* Timer */
+    .timer{background:linear-gradient(135deg,#0f172a,#374151);color:#fff;padding:12px;border-radius:8px;text-align:center}
+    .timer-display{font-size:1.6rem;font-weight:800;margin-top:8px}
+    .timer-controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+    .timer-btn{padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:transparent;color:#fff;cursor:pointer}
 
     /* Entries list */
     .entries{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
-    .entry{background:#fff;border-radius:8px;padding:10px;border:1px solid #eef2ff}
+    .entry{background:#fff;padding:10px;border-radius:8px;border:1px solid #eef2ff}
 
-    /* Utility */
-    .muted{color:var(--muted)}
+    @media(min-width:600px){
+      .card{padding:18px}
+    }
   </style>
 </head>
 <body>
-  <div class="app-wrap">
+  <div class="app">
     <div class="card" role="application">
       <header class="header">
-        <div>
-          <h1 class="title">筋トレ日記</h1>
-        </div>
-        <nav class="tabs" role="tablist" aria-label="メインメニュー">
-          <button class="tab-btn active" data-target="tab-record" role="tab" aria-selected="true">記録</button>
-          <button class="tab-btn" data-target="tab-calendar" role="tab" aria-selected="false">カレンダー</button>
-          <button class="tab-btn" data-target="tab-timer" role="tab" aria-selected="false">タイマー</button>
+        <h1 class="title">筋トレ日記</h1>
+        <nav class="tabs" role="tablist" aria-label="メインタブ">
+          <button class="tab-btn active" data-target="tab-record" type="button">記録</button>
+          <button class="tab-btn" data-target="tab-calendar" type="button">カレンダー</button>
+          <button class="tab-btn" data-target="tab-timer" type="button">タイマー</button>
         </nav>
       </header>
 
-      <main class="main-grid">
+      <main style="margin-top:12px">
         <section id="tab-record" class="panel active">
           <form id="logForm">
-            <div class="form-grid">
-              <label>日付 <input id="date" type="date" required></label>
-              <label>部位 <input id="part" type="text" placeholder="胸・脚・背中" required></label>
-              <label>種目 <input id="exercise" type="text" placeholder="ベンチプレス" required list="exerciseList"></label>
-              <datalist id="exerciseList"></datalist>
-              <label>セット数 <input id="sets" type="number" min="1" value="3"></label>
-            </div>
+            <label>日付 <input id="date" type="date" required></label>
+            <label>部位 <input id="part" type="text" placeholder="胸・脚・背中" required></label>
+            <label>種目 <input id="exercise" type="text" placeholder="ベンチプレス" list="exerciseList"></label>
+            <datalist id="exerciseList"></datalist>
+            <label>セット数 <input id="sets" type="number" min="1" value="3"></label>
             <label>備考 <textarea id="memo"></textarea></label>
-            <div class="actions">
+
+            <div class="actions" style="margin-top:6px">
               <button type="submit" class="submit-btn">記録を追加</button>
               <button type="button" id="applyLastBtn" class="tab-btn">前回を適用</button>
               <button type="button" id="restoreDraftBtn" class="tab-btn">下書きを復元</button>
@@ -100,123 +89,113 @@
           <ul id="entries" class="entries" aria-live="polite"></ul>
         </section>
 
-        <aside class="sidebar">
-          <section id="tab-calendar" class="panel" aria-hidden="true">
-            <div style="display:flex;justify-content:space-between;align-items:center"><strong>カレンダー</strong><div id="monthLabel" class="muted"></div></div>
-            <div id="calendar" class="mini-calendar" style="margin-top:8px"></div>
-            <div style="margin-top:10px"><strong>選択日</strong><div id="selectedEntries" class="muted" style="margin-top:6px">該当なし</div></div>
-          </section>
+        <section id="tab-calendar" class="panel" style="margin-top:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center"><strong>カレンダー</strong><div id="monthLabel" class="muted"></div></div>
+          <div id="calendar" class="mini-calendar"></div>
+          <div style="margin-top:10px"><strong>選択日</strong><div id="selectedEntries" class="muted" style="margin-top:6px">該当なし</div></div>
+        </section>
 
-          <section id="tab-timer" class="panel" aria-hidden="true">
-            <div class="timer-card">
-              <div style="display:flex;justify-content:space-between;align-items:center"><strong>レストタイマー</strong><span class="muted">バックグラウンド対応</span></div>
-              <div id="timerDisplay" class="timer-display" style="margin-top:8px">01:30</div>
-              <div class="timer-controls">
-                <button id="timerStartBtn" class="timer-btn">開始</button>
-                <button id="timerStopBtn" class="timer-btn" disabled>一時停止</button>
-                <button id="timerResetBtn" class="timer-btn">リセット</button>
-              </div>
-              <div style="margin-top:8px;display:flex;justify-content:center;gap:8px">
-                <input id="customTimerInput" type="number" min="0" value="90" style="width:90px;padding:6px;border-radius:8px;border:none;text-align:center"> 
-                <button id="customTimerBtn" class="timer-btn">セット(秒)</button>
-              </div>
-              <div style="margin-top:8px;display:flex;justify-content:center;gap:8px">
-                <button id="audioUnlockBtn" class="tab-btn">サウンドを有効にする</button>
-                <button id="stopAlarmBtn" class="tab-btn">アラーム停止</button>
-              </div>
+        <section id="tab-timer" class="panel" style="margin-top:12px">
+          <div class="timer">
+            <div style="display:flex;justify-content:space-between;align-items:center"><strong>レストタイマー</strong><span class="muted">バックグラウンド対応</span></div>
+            <div id="timerDisplay" class="timer-display">01:30</div>
+            <div class="timer-controls">
+              <button id="timerStartBtn" class="timer-btn">開始</button>
+              <button id="timerStopBtn" class="timer-btn" disabled>一時停止</button>
+              <button id="timerResetBtn" class="timer-btn">リセット</button>
             </div>
-          </section>
-        </aside>
+            <div style="display:flex;justify-content:center;gap:8px;margin-top:8px;flex-wrap:wrap">
+              <input id="customTimerInput" type="number" min="0" value="90" style="width:110px;padding:8px;border-radius:8px;border:none;text-align:center">
+              <button id="customTimerBtn" class="timer-btn">セット(秒)</button>
+            </div>
+            <div style="display:flex;justify-content:center;gap:8px;margin-top:8px;flex-wrap:wrap">
+              <button id="audioUnlockBtn" class="tab-btn">サウンドを有効にする</button>
+              <button id="stopAlarmBtn" class="tab-btn">アラーム停止</button>
+            </div>
+          </div>
+        </section>
       </main>
     </div>
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', ()=>{
-      // --- storage keys ---
-      const STORAGE_KEY = 'workout-diary-entries';
-      const TIMER_KEY = 'workout-timer-end';
-      const REM_KEY = 'workout-timer-remaining';
-      const DRAFT_KEY = 'workout-draft';
+      // Simple mobile-first app: tab switching + basic features
+      const tabs = Array.from(document.querySelectorAll('.tab-btn'));
+      const panels = { 'tab-record': document.getElementById('tab-record'), 'tab-calendar': document.getElementById('tab-calendar'), 'tab-timer': document.getElementById('tab-timer') };
 
-      const el = id => document.getElementById(id);
-
-      // Tab switching
-      const tabButtons = Array.from(document.querySelectorAll('.tab-btn'));
-      function switchTab(targetId){
-        // panels
-        document.querySelectorAll('.panel').forEach(p=>{
-          if(p.id === targetId){ p.classList.add('active'); p.removeAttribute('aria-hidden'); }
-          else { p.classList.remove('active'); p.setAttribute('aria-hidden','true'); }
+      function showPanel(id){
+        Object.keys(panels).forEach(k=>{
+          const p = panels[k]; if(!p) return;
+          if(k === id){ p.classList.add('active'); p.style.display = 'block'; } else { p.classList.remove('active'); p.style.display = 'none'; }
         });
-        // buttons
-        tabButtons.forEach(b=>{
-          const t = b.getAttribute('data-target');
-          const active = (t === targetId);
-          b.classList.toggle('active', active);
-          b.setAttribute('aria-selected', String(active));
-        });
-        // panel-specific refresh
-        if(targetId === 'tab-calendar') renderCalendar();
-        if(targetId === 'tab-timer') { refreshTimerUI(); resumeTimerIfNeeded(); }
+        tabs.forEach(b=> b.classList.toggle('active', b.dataset.target === id));
       }
-      tabButtons.forEach(b=>{ b.addEventListener('click', ()=> switchTab(b.dataset.target)); });
 
-      // Entries storage
-      function saveEntries(list){ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }
+      tabs.forEach(btn=>{
+        // ensure data-target exists
+        if(!btn.dataset.target){
+          const t = btn.textContent.trim().toLowerCase(); btn.dataset.target = t.includes('記録')? 'tab-record' : t.includes('カレンダー')? 'tab-calendar' : 'tab-timer';
+        }
+        btn.addEventListener('click', ()=>{ showPanel(btn.dataset.target); if(btn.dataset.target === 'tab-calendar') renderCalendar(); if(btn.dataset.target === 'tab-timer'){ refreshTimerUI(); resumeTimerIfNeeded(); } });
+      });
+
+      // Ensure initial visibility
+      showPanel('tab-record');
+
+      // Storage helpers
+      const STORAGE_KEY = 'workout-diary-entries';
       function loadEntries(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); }catch(e){ return []; } }
+      function saveEntries(a){ localStorage.setItem(STORAGE_KEY, JSON.stringify(a)); }
 
       // init date
-      if(el('date')) el('date').value = new Date().toISOString().slice(0,10);
+      const dateEl = document.getElementById('date'); if(dateEl) dateEl.value = new Date().toISOString().slice(0,10);
 
       // render entries
       function escapeHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-      function renderEntriesList(){ const list = loadEntries().slice().sort((a,b)=>b.date.localeCompare(a.date)); const container = el('entries'); if(!container) return; if(!list.length) { container.innerHTML = '<li class="entry">まだ記録がありません</li>'; return; } container.innerHTML = list.map(e=>`<li class="entry"><div style="display:flex;justify-content:space-between;align-items:center"><div><strong>${escapeHtml(e.date)}</strong> <div style="font-weight:700">${escapeHtml(e.part)} - ${escapeHtml(e.exercise)}</div></div><div style="font-size:.85rem;color:#64748b">${e.sets||''}セット</div></div><div style="margin-top:6px;color:#64748b">${escapeHtml(e.memo||'')}</div></li>`).join(''); }
+      function renderEntries(){ const list = loadEntries().slice().sort((a,b)=>b.date.localeCompare(a.date)); const container = document.getElementById('entries'); if(!container) return; if(!list.length){ container.innerHTML = '<li class="entry">まだ記録がありません</li>'; return; } container.innerHTML = list.map(e=>`<li class="entry"><div style="display:flex;justify-content:space-between;align-items:center"><div><strong>${escapeHtml(e.date)}</strong><div style="font-weight:700">${escapeHtml(e.part)} - ${escapeHtml(e.exercise)}</div></div><div class="muted">${e.sets||''}セット</div></div><div style="margin-top:8px;color:#64748b">${escapeHtml(e.memo||'')}</div></li>`).join(''); }
 
-      // form submit
-      const form = el('logForm'); if(form){ form.addEventListener('submit', (ev)=>{ ev.preventDefault(); const entry = { id: String(Date.now()), date: el('date').value, part: el('part').value.trim(), exercise: el('exercise').value.trim(), sets: Number(el('sets').value)||0, memo: el('memo').value.trim() }; if(!entry.date||!entry.part||!entry.exercise){ alert('日付・部位・種目を入力してください'); return; } const arr = loadEntries(); arr.push(entry); saveEntries(arr); renderEntriesList(); alert('記録を保存しました'); }); }
+      const form = document.getElementById('logForm'); if(form){ form.addEventListener('submit', (ev)=>{ ev.preventDefault(); const entry = { id: String(Date.now()), date: (dateEl? dateEl.value: ''), part: document.getElementById('part').value.trim(), exercise: document.getElementById('exercise').value.trim(), sets: Number(document.getElementById('sets').value)||0, memo: document.getElementById('memo').value.trim() }; if(!entry.date||!entry.part||!entry.exercise){ alert('日付・部位・種目を入力してください'); return; } const arr = loadEntries(); arr.push(entry); saveEntries(arr); renderEntries(); alert('記録を保存しました'); }); }
 
       // apply last
-      if(el('applyLastBtn')) el('applyLastBtn').addEventListener('click', ()=>{ const arr = loadEntries().slice().sort((a,b)=>b.date.localeCompare(a.date)); if(!arr.length) return alert('記録がありません'); const e = arr[0]; if(el('date')) el('date').value = e.date||new Date().toISOString().slice(0,10); if(el('part')) el('part').value = e.part||''; if(el('exercise')) el('exercise').value = e.exercise||''; if(el('sets')) el('sets').value = e.sets||3; if(el('memo')) el('memo').value = e.memo||''; });
+      const applyLastBtn = document.getElementById('applyLastBtn'); if(applyLastBtn){ applyLastBtn.addEventListener('click', ()=>{ const arr = loadEntries().slice().sort((a,b)=>b.date.localeCompare(a.date)); if(!arr.length) return alert('記録がありません'); const e = arr[0]; if(dateEl) dateEl.value = e.date||new Date().toISOString().slice(0,10); document.getElementById('part').value = e.part||''; document.getElementById('exercise').value = e.exercise||''; document.getElementById('sets').value = e.sets||3; document.getElementById('memo').value = e.memo||''; }); }
 
-      // calendar rendering
+      // calendar
       let calDate = new Date(); function ymd(d){ return d.toISOString().slice(0,10); }
       function startOfMonth(d){ return new Date(d.getFullYear(), d.getMonth(), 1); }
       function endOfMonth(d){ return new Date(d.getFullYear(), d.getMonth()+1, 0); }
-      function renderCalendar(){ const container = el('calendar'); if(!container) return; container.innerHTML = ''; const start = startOfMonth(calDate); const end = endOfMonth(calDate); const startWeek = start.getDay(); for(let i=0;i<startWeek;i++) container.appendChild(document.createElement('div')); const entries = loadEntries(); const partsByDate = entries.reduce((acc,e)=>{ if(!e||!e.date) return acc; acc[e.date]=acc[e.date]||[]; acc[e.date].push(e.part); return acc; },{}); for(let day=1; day<=end.getDate(); day++){ const d = new Date(calDate.getFullYear(), calDate.getMonth(), day); const iso = ymd(d); const cell = document.createElement('div'); cell.className='mini-day'; cell.textContent = day; if(partsByDate[iso] && partsByDate[iso].length) cell.style.border='2px solid #93c5fd'; cell.addEventListener('click', ()=>{ el('selectedEntries').textContent = partsByDate[iso]? partsByDate[iso].join(', ') : 'その日は記録がありません'; }); container.appendChild(cell); } const ml = el('monthLabel'); if(ml) ml.textContent = `${calDate.getFullYear()}年 ${calDate.getMonth()+1}月`; }
+      function renderCalendar(){ const container = document.getElementById('calendar'); if(!container) return; container.innerHTML=''; const start = startOfMonth(calDate); const end = endOfMonth(calDate); const startWeek = start.getDay(); for(let i=0;i<startWeek;i++) container.appendChild(document.createElement('div')); const entries = loadEntries(); const map = entries.reduce((acc,e)=>{ if(!e||!e.date) return acc; acc[e.date]=acc[e.date]||[]; acc[e.date].push(e.part); return acc; },{}); for(let d=1; d<=end.getDate(); d++){ const dt = new Date(calDate.getFullYear(), calDate.getMonth(), d); const iso = ymd(dt); const elc = document.createElement('div'); elc.className='mini-day'; elc.textContent = d; if(map[iso] && map[iso].length) elc.style.border='2px solid #93c5fd'; elc.addEventListener('click', ()=>{ document.getElementById('selectedEntries').textContent = map[iso]? map[iso].join(', ') : 'その日は記録がありません'; }); container.appendChild(elc); } const ml = document.getElementById('monthLabel'); if(ml) ml.textContent = `${calDate.getFullYear()}年 ${calDate.getMonth()+1}月`; }
 
-      // timer (lightweight, same semantics)
-      let timerInterval = null; function getNowSec(){ return Math.floor(Date.now()/1000); }
-      function formatTimeSec(sec){ if(sec<0) sec=0; const m=Math.floor(sec/60).toString().padStart(2,'0'); const s=(sec%60).toString().padStart(2,'0'); return `${m}:${s}`; }
-      function updateTimerDisplay(){ const end = Number(localStorage.getItem(TIMER_KEY)||0); const td = el('timerDisplay'); if(!td) return; if(!end){ const paused = Number(localStorage.getItem(REM_KEY)||0); if(paused && paused>0){ td.textContent = formatTimeSec(paused); return; } td.textContent = formatTimeSec(0); return; } const rem = end - getNowSec(); td.textContent = formatTimeSec(rem); if(rem<=0){ clearInterval(timerInterval); timerInterval=null; localStorage.removeItem(TIMER_KEY); playAlarmSound(); refreshTimerUI(); } }
-      function startBackgroundTimer(seconds){ let secs = Math.max(0,Math.floor(seconds||0)); const end = getNowSec()+secs; localStorage.setItem(TIMER_KEY, String(end)); localStorage.removeItem(REM_KEY); if(timerInterval) clearInterval(timerInterval); timerInterval=setInterval(updateTimerDisplay,500); updateTimerDisplay(); }
-      function stopBackgroundTimer(){ if(timerInterval) clearInterval(timerInterval); timerInterval=null; const end = Number(localStorage.getItem(TIMER_KEY)||0); if(end){ const rem = Math.max(0,end-getNowSec()); if(rem>0) localStorage.setItem(REM_KEY,String(rem)); else localStorage.removeItem(REM_KEY); } localStorage.removeItem(TIMER_KEY); refreshTimerUI(); updateTimerDisplay(); }
-      function resumeTimerIfNeeded(){ const end = Number(localStorage.getItem(TIMER_KEY)||0); if(end && end>getNowSec()){ if(timerInterval) clearInterval(timerInterval); timerInterval=setInterval(updateTimerDisplay,500); updateTimerDisplay(); } else updateTimerDisplay(); }
-      function refreshTimerUI(){ const end = Number(localStorage.getItem(TIMER_KEY)||0); const startBtn = el('timerStartBtn'); const stopBtn = el('timerStopBtn'); if(end && end>getNowSec()){ if(startBtn) startBtn.disabled=true; if(stopBtn) stopBtn.disabled=false; } else { if(startBtn) startBtn.disabled=false; if(stopBtn) stopBtn.disabled=true; } }
+      // Timer (basic)
+      const TIMER_KEY = 'workout-timer-end'; const REM_KEY = 'workout-timer-remaining';
+      let timerInterval = null;
+      function getNow(){ return Math.floor(Date.now()/1000); }
+      function formatSec(s){ if(s<0) s=0; const m = Math.floor(s/60).toString().padStart(2,'0'); const ss = (s%60).toString().padStart(2,'0'); return `${m}:${ss}`; }
+      function updateTimer(){ const end = Number(localStorage.getItem(TIMER_KEY)||0); const td = document.getElementById('timerDisplay'); if(!td) return; if(!end){ const paused = Number(localStorage.getItem(REM_KEY)||0); if(paused>0){ td.textContent = formatSec(paused); return; } td.textContent = formatSec(0); return; } const rem = end - getNow(); td.textContent = formatSec(rem); if(rem<=0){ clearInterval(timerInterval); timerInterval=null; localStorage.removeItem(TIMER_KEY); playAlarm(); refreshTimer(); } }
+      function startTimer(sec){ const s = Math.max(0, Math.floor(sec||0)); const end = getNow() + s; localStorage.setItem(TIMER_KEY,String(end)); localStorage.removeItem(REM_KEY); if(timerInterval) clearInterval(timerInterval); timerInterval = setInterval(updateTimer,500); updateTimer(); }
+      function stopTimer(){ if(timerInterval) clearInterval(timerInterval); timerInterval=null; const end = Number(localStorage.getItem(TIMER_KEY)||0); if(end){ const rem = Math.max(0,end-getNow()); if(rem>0) localStorage.setItem(REM_KEY,String(rem)); else localStorage.removeItem(REM_KEY); } localStorage.removeItem(TIMER_KEY); updateTimer(); refreshTimer(); }
+      function resumeTimerIfNeeded(){ const end = Number(localStorage.getItem(TIMER_KEY)||0); if(end && end>getNow()){ if(timerInterval) clearInterval(timerInterval); timerInterval=setInterval(updateTimer,500); updateTimer(); } else updateTimer(); }
+      function refreshTimer(){ const end = Number(localStorage.getItem(TIMER_KEY)||0); const sb = document.getElementById('timerStartBtn'); const pb = document.getElementById('timerStopBtn'); if(end && end>getNow()){ if(sb) sb.disabled=true; if(pb) pb.disabled=false; } else { if(sb) sb.disabled=false; if(pb) pb.disabled=true; } }
 
-      if(el('timerStartBtn')) el('timerStartBtn').addEventListener('click', ()=>{ const paused = Number(localStorage.getItem(REM_KEY)||0); const s = Number(el('customTimerInput').value)||90; if(paused && paused>0){ startBackgroundTimer(paused); } else startBackgroundTimer(s); });
-      if(el('timerStopBtn')) el('timerStopBtn').addEventListener('click', ()=>{ stopBackgroundTimer(); });
-      if(el('timerResetBtn')) el('timerResetBtn').addEventListener('click', ()=>{ stopBackgroundTimer(); localStorage.removeItem(REM_KEY); el('customTimerInput').value = 90; updateTimerDisplay(); });
-      if(el('customTimerBtn')) el('customTimerBtn').addEventListener('click', ()=>{ const v = Number(el('customTimerInput').value)||90; localStorage.setItem(REM_KEY,String(Math.max(0,Math.floor(v)))); localStorage.removeItem(TIMER_KEY); if(timerInterval) clearInterval(timerInterval); timerInterval=null; updateTimerDisplay(); refreshTimerUI(); });
+      document.getElementById('timerStartBtn').addEventListener('click', ()=>{ const paused = Number(localStorage.getItem(REM_KEY)||0); const v = Number(document.getElementById('customTimerInput').value)||90; if(paused && paused>0) startTimer(paused); else startTimer(v); });
+      document.getElementById('timerStopBtn').addEventListener('click', ()=> stopTimer());
+      document.getElementById('timerResetBtn').addEventListener('click', ()=>{ stopTimer(); localStorage.removeItem(REM_KEY); document.getElementById('customTimerInput').value = 90; updateTimer(); });
+      document.getElementById('customTimerBtn').addEventListener('click', ()=>{ const v = Number(document.getElementById('customTimerInput').value)||90; localStorage.setItem(REM_KEY,String(Math.max(0,Math.floor(v)))); localStorage.removeItem(TIMER_KEY); if(timerInterval) clearInterval(timerInterval); timerInterval=null; updateTimer(); refreshTimer(); });
 
-      // simple audio alarm
-      let audioCtx=null, alarmAudio=null, audioEnabled=false;
-      function unlockAudio(){ try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); audioEnabled=true; const b = el('audioUnlockBtn'); if(b) b.textContent='サウンド有効 (OK)'; }catch(e){ console.warn('audio unlock failed',e); } }
-      function playAlarmSound(){ try{ if(audioEnabled && audioCtx){ const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.type='sine'; o.frequency.value = 880; g.gain.setValueAtTime(0.001,audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.6,audioCtx.currentTime+0.02); g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.7); o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.7); return; } }catch(e){} try{ if(!alarmAudio) alarmAudio = new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA='); alarmAudio.loop=true; alarmAudio.play().catch(()=>{}); }catch(e){} }
-      function stopAlarmSound(){ try{ if(alarmAudio){ alarmAudio.pause(); alarmAudio.currentTime=0; alarmAudio=null; } }catch(e){} }
-      if(el('audioUnlockBtn')) el('audioUnlockBtn').addEventListener('click', unlockAudio);
-      if(el('stopAlarmBtn')) el('stopAlarmBtn').addEventListener('click', stopAlarmSound);
+      // simple audio
+      let audioCtx=null, audioOn=false, alarmAudio=null;
+      function unlockAudio(){ try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); audioOn=true; document.getElementById('audioUnlockBtn').textContent='サウンド有効 (OK)'; }catch(e){ console.warn(e); } }
+      function playAlarm(){ try{ if(audioOn && audioCtx){ const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.type='sine'; o.frequency.value=880; g.gain.setValueAtTime(0.001,audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.6,audioCtx.currentTime+0.02); g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.7); o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.7); return; } }catch(e){} try{ if(!alarmAudio) alarmAudio=new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA='); alarmAudio.loop=true; alarmAudio.play().catch(()=>{}); }catch(e){} }
+      function stopAlarm(){ try{ if(alarmAudio){ alarmAudio.pause(); alarmAudio.currentTime=0; alarmAudio=null; } }catch(e){} }
+      document.getElementById('audioUnlockBtn').addEventListener('click', unlockAudio);
+      document.getElementById('stopAlarmBtn').addEventListener('click', stopAlarm);
 
-      // notification & vibrate
-      function notifyTimerEnd(){ try{ if('Notification' in window && Notification.permission!=='denied') Notification.requestPermission().then(p=>{ if(p==='granted') new Notification('タイマー終了',{body:'レストが終わりました'}); }); }catch(e){} try{ if(navigator.vibrate) navigator.vibrate([200,100,200]); }catch(e){} }
-      const origPlay = playAlarmSound; playAlarmSound = function(){ origPlay(); notifyTimerEnd(); }
+      // notifications
+      function notify(){ try{ if('Notification' in window && Notification.permission!=='denied') Notification.requestPermission().then(p=>{ if(p==='granted') new Notification('タイマー終了',{body:'レストが終わりました'}); }); }catch(e){} try{ if(navigator.vibrate) navigator.vibrate([200,100,200]); }catch(e){} }
+      const origPlay = playAlarm; playAlarm = function(){ origPlay(); notify(); }
 
-      // init
-      renderEntriesList(); renderMiniCalendar(); refreshTimerUI(); resumeTimerIfNeeded();
-
-      // last: calendar/tab behavior - ensure first tab active
-      switchTab('tab-record');
-      function switchTab(name){ switchTab = switchTab; /* noop until defined */ }
+      // initial render
+      renderEntries(); renderCalendar(); resumeTimerIfNeeded(); refreshTimer();
     });
   </script>
 </body>
