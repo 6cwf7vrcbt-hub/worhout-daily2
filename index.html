@@ -16,7 +16,8 @@
       @media(max-width:600px){
         .container{margin:12px auto;padding:12px}
         h1{font-size:1.2rem}
-        .form-grid{grid-template-columns:1fr}
+        /* use two-column compact layout on most phones, fallback to single column on very small screens */
+        .form-grid{grid-template-columns:repeat(2,1fr);gap:8px}
         label{font-size:0.95rem}
         input,textarea{font-size:1rem;padding:12px}
         .set-row{flex-direction:column;align-items:stretch}
@@ -33,6 +34,9 @@
         .entry{padding:12px}
         .sidebar{padding:10px}
         #exportControls{flex-wrap:wrap}
+      }
+      @media(max-width:380px){
+        .form-grid{grid-template-columns:1fr}
       }
       .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
       label{display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:.95rem}
@@ -576,6 +580,8 @@
         if(timerInterval) clearInterval(timerInterval);
         updateTimerDisplay();
         timerInterval = setInterval(updateTimerDisplay, 500);
+        // UI feedback
+        el('timerStartBtn').disabled = true; el('timerStopBtn').disabled = false; el('timerDisplay').style.opacity = 1;
       }
 
       function stopBackgroundTimer(){ if(timerInterval) clearInterval(timerInterval); timerInterval=null; localStorage.removeItem(TIMER_KEY); updateTimerDisplay(); }
@@ -583,7 +589,7 @@
       function resumeTimerIfNeeded(){ const end = Number(localStorage.getItem(TIMER_KEY) || 0); if(end && end>getNowSec()){ if(timerInterval) clearInterval(timerInterval); timerInterval=setInterval(updateTimerDisplay,500); updateTimerDisplay(); } else { updateTimerDisplay(); } }
 
       el('timerStartBtn').addEventListener('click', ()=>{ const sec = Number(el('customTimerInput').value) || 90; startBackgroundTimer(sec); });
-      el('timerStopBtn').addEventListener('click', ()=>{ stopBackgroundTimer(); });
+      el('timerStopBtn').addEventListener('click', ()=>{ stopBackgroundTimer(); el('timerStartBtn').disabled = false; el('timerStopBtn').disabled = true; });
       el('timerResetBtn').addEventListener('click', ()=>{ stopBackgroundTimer(); el('customTimerInput').value = 90; updateTimerDisplay(); });
       el('customTimerBtn').addEventListener('click', ()=>{ const val = Number(el('customTimerInput').value) || 90; startBackgroundTimer(val); });
 
@@ -663,9 +669,17 @@
       el('exportCsvBtn').addEventListener('click', ()=>{ exportCSV(); });
       el('importFile').addEventListener('change', (ev)=>{ const f = ev.target.files[0]; if(!f) return; if(f.name.endsWith('.json')) importJSONFile(f); else importCSVFile(f); el('importFile').value=''; });
 
-      // settings menu
+      // settings menu: position near button and prevent immediate hide
       const settingsBtn = el('settingsBtn'); const settingsMenu = el('settingsMenu');
-      settingsBtn.addEventListener('click', ()=>{ settingsMenu.style.display = settingsMenu.style.display==='none'?'block':'none'; });
+      settingsBtn.addEventListener('click', (ev)=>{ ev.stopPropagation();
+        // position menu near the button
+        const r = settingsBtn.getBoundingClientRect();
+        settingsMenu.style.position = 'fixed';
+        settingsMenu.style.left = Math.max(8, r.left) + 'px';
+        settingsMenu.style.top = (r.bottom + 6) + 'px';
+        settingsMenu.style.display = settingsMenu.style.display==='none'?'block':'none';
+        settingsBtn.setAttribute('aria-expanded', settingsMenu.style.display==='block');
+      });
       document.addEventListener('click', (ev)=>{ if(!ev.target.closest || !ev.target.closest('#settingsMenu') && ev.target!==settingsBtn) settingsMenu.style.display='none'; });
       el('clearAllBtn').addEventListener('click', ()=>{ if(!confirm('全データを削除しますか？ この操作は取り消せません')) return; localStorage.removeItem(STORAGE_KEY); localStorage.removeItem('workout-draft'); renderEntriesList(); renderCalendar(); renderMiniCalendar(el('date').value); buildExerciseList(); alert('全データを削除しました'); });
 
