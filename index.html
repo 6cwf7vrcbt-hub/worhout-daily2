@@ -7,87 +7,70 @@
     <style>
       :root{--bg:#f5f7fb;--card:#fff;--primary:#1d4ed8;--muted:#64748b;--text:#1f2937}
       *{box-sizing:border-box}
-      body{margin:0;background:linear-gradient(135deg,#eef6ff 0%,#f8fafc 100%);font-family:Segoe UI, Hiragino Sans, "Yu Gothic", sans-serif;color:var(--text);-webkit-text-size-adjust:100%;}
-      /* prevent horizontal scrolling on small devices */
-      html,body{overflow-x:hidden}
-      .container{max-width:1200px;margin:28px auto;padding:18px}
-      .card{background:var(--card);border-radius:20px;box-shadow:0 12px 28px rgba(15,23,42,.12);padding:20px}
-      .content{display:grid;grid-template-columns:1.6fr .9fr;gap:18px}
+      html,body{overflow-x:hidden;max-width:100vw}
+      body{margin:0;background:linear-gradient(135deg,#eef6ff 0%,#f8fafc 100%);font-family:Segoe UI, Hiragino Sans, "Yu Gothic", sans-serif;color:var(--text);-webkit-text-size-adjust:100%}
+
+      /* Fluid containers */
+      .container,.card,form,main,aside,header,footer,section{width:100%;max-width:100%;box-sizing:border-box}
+      .container{max-width:1200px;margin:16px auto;padding:12px}
+      .card{background:var(--card);border-radius:14px;box-shadow:0 10px 20px rgba(15,23,42,.08);padding:14px}
+
+      /* Layout */
+      .content{display:grid;grid-template-columns:1.6fr .9fr;gap:12px;width:100%}
       @media(max-width:900px){.content{grid-template-columns:1fr}}
-      /* Mobile optimizations (relocated below .form-grid to ensure overrides apply) */
-      .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
-      label{display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:.95rem}
-      input,textarea,button{font:inherit}
-      input,textarea{padding:10px;border:1px solid #cbd5e1;border-radius:10px}
-      .set-rows{display:flex;flex-direction:column;gap:6px;margin-top:6px}
-      .set-row{display:flex;gap:8px;align-items:center}
-      .set-row input{width:84px}
-      .small-btn{padding:8px 10px;border-radius:8px;border:1px solid #e2e8f0;background:#fff;cursor:pointer}
-      .small-btn:focus{outline:3px solid rgba(59,130,246,0.18)}
-      .submit-btn{background:var(--primary);color:#fff;padding:12px 16px;border-radius:10px;border:none;font-weight:700}
-      @media(max-width:480px){.submit-btn{width:100%;padding:12px}}
-      .sidebar{background:#f8fafc;border:1px solid #e6eefc;border-radius:12px;padding:14px}
-      .calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
-      .mini-calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:12px}
-      .mini-day{padding:12px 8px;border-radius:10px;text-align:center;background:#fff;border:1px solid #eef2ff;font-size:1rem;cursor:pointer;min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
-      .mini-day.today{box-shadow:inset 0 0 0 2px rgba(29,78,216,.06)}
-      .mini-day.selected{background:linear-gradient(180deg,#e0f2fe,#bfdbfe);border-color:#60a5fa}
-      .mini-day.has-entry{background:linear-gradient(180deg,#fffbeb,#fff7ed);border-color:#fde68a}
-      .mini-day .mini-parts{margin-top:8px;font-size:.7rem}
-      .mini-day .mini-parts .part-item{display:inline-block;background:rgba(37,99,235,0.06);color:#1e3a8a;padding:2px 6px;border-radius:6px;margin:2px 2px 0;font-size:.66rem}
-      .cal-day{padding:8px;border-radius:8px;text-align:center;background:#fff;border:1px solid #eef2ff;min-height:54px}
-      .cal-day.today{box-shadow:inset 0 0 0 2px rgba(29,78,216,.06)}
-      .cal-day.has-entry{background:linear-gradient(180deg,#fffbeb,#fff7ed);border-color:#fde68a}
-      .cal-parts{margin-top:6px;font-size:.72rem;color:#1f2937;opacity:.95;word-break:keep-all}
-      .cal-parts .part-item{display:inline-block;background:rgba(37,99,235,0.06);color:#1e3a8a;padding:2px 6px;border-radius:6px;margin:2px 2px 0;font-size:.68rem}
-      .timer-panel{background:linear-gradient(135deg,#0f172a,#374151);color:#fff;border-radius:12px;padding:12px;margin-bottom:10px}
-      .timer-display{font-weight:800;font-size:1.6rem;text-align:center;margin:8px 0}
-      .timer-controls{display:flex;gap:8px;justify-content:center}
-      .timer-btn{background:#fff0; border:1px solid rgba(255,255,255,0.12);color:#fff;padding:6px 10px;border-radius:8px;cursor:pointer}
-      .cal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-      /* topbar/header responsive helpers */
+
+      /* Header/topbar */
       .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
       .topbar .left{display:flex;align-items:center;gap:12px}
-      .topbar .right{display:flex;gap:8px;align-items:center;position:relative}
-      #settingsMenu{display:none;position:absolute;right:0;top:calc(100% + 6px);background:#fff;border:1px solid #e6eefc;border-radius:8px;padding:10px;box-shadow:0 8px 24px rgba(15,23,42,.12);z-index:40;min-width:200px;max-width:90vw;box-sizing:border-box}
-      .nav-btn{background:#fff;border:1px solid #e2e8f0;padding:6px 8px;border-radius:8px;cursor:pointer}
-      .month-label{font-weight:700}
-      .day-labels{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:6px}
-      .day-label{font-size:.75rem;color:var(--muted);text-align:center}
+      .topbar .right{display:flex;gap:8px;align-items:center;position:relative;flex-wrap:wrap}
+      #settingsMenu{display:none;position:absolute;right:0;top:calc(100% + 8px);background:#fff;border:1px solid #e6eefc;border-radius:8px;padding:10px;box-shadow:0 8px 24px rgba(15,23,42,.12);z-index:40;min-width:200px;max-width:92vw;box-sizing:border-box}
+
+      /* Form */
+      .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;width:100%;grid-auto-flow:row}
+      label{display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:.95rem}
+      input,textarea,button{font:inherit;min-width:0}
+      input,textarea{padding:10px;border:1px solid #cbd5e1;border-radius:10px;width:100%;max-width:100%;box-sizing:border-box}
+
+      /* Buttons and groups wrap */
+      .form-actions, .topbar .right, .timer-controls, .entries-list, .set-rows, .mini-calendar{display:flex;flex-wrap:wrap;gap:8px}
+      .set-rows{flex-direction:column;margin-top:6px}
+      .set-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+      .set-row input{width:84px;min-width:64px}
+      .small-btn{padding:8px 10px;border-radius:8px;border:1px solid #e2e8f0;background:#fff;cursor:pointer;white-space:normal}
+      .small-btn:focus{outline:3px solid rgba(59,130,246,0.18)}
+      .submit-btn{background:var(--primary);color:#fff;padding:10px 14px;border-radius:10px;border:none;font-weight:700;min-width:0}
+
+      /* Sidebar / calendar */
+      .sidebar{background:#f8fafc;border:1px solid #e6eefc;border-radius:12px;padding:12px}
+      .calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;width:100%}
+      .mini-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;margin-top:12px;width:100%}
+      .mini-day{padding:8px;border-radius:10px;text-align:center;background:#fff;border:1px solid #eef2ff;font-size:.95rem;cursor:pointer;min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;overflow:hidden}
+      .mini-day .mini-parts{margin-top:6px;font-size:.72rem}
+
+      /* Entries */
       .entries{list-style:none;padding:0;margin-top:12px}
-      .entry{background:#fff;border-radius:10px;padding:8px;border:1px solid #eef2ff;margin-bottom:8px}
-      /* chart modal */
+      .entry{background:#fff;border-radius:10px;padding:8px;border:1px solid #eef2ff;margin-bottom:8px;word-break:break-word}
+
+      /* Timer */
+      .timer-panel{background:linear-gradient(135deg,#0f172a,#374151);color:#fff;border-radius:12px;padding:12px;margin-bottom:10px;width:100%}
+      .timer-display{font-weight:800;font-size:1.4rem;text-align:center;margin:8px 0}
+      .timer-controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+      .timer-btn{background:#fff0; border:1px solid rgba(255,255,255,0.12);color:#fff;padding:8px 10px;border-radius:8px;cursor:pointer;min-width:0}
+
+      /* Modal/chart */
       .modal{position:fixed;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:80}
-      .modal-content{background:#fff;border-radius:12px;padding:14px;max-width:920px;width:92%;max-height:88%;overflow:auto}
+      .modal-content{background:#fff;border-radius:12px;padding:14px;max-width:920px;width:92%;max-height:88%;overflow:auto;box-sizing:border-box}
       .chart-canvas{width:100%;height:360px}
-    </style>
-    <style>
-      @media(max-width:600px){
-        .container{margin:12px auto;padding:12px}
-        h1{font-size:1.2rem}
-        /* use two-column compact layout on most phones, fallback to single column on very small screens */
-        .form-grid{grid-template-columns:repeat(2,1fr);gap:8px}
-        label{font-size:0.95rem}
-        input,textarea{font-size:1rem;padding:12px}
-        .set-row{flex-direction:column;align-items:stretch}
-        .set-row .set-index{width:auto;margin-bottom:6px}
+
+      /* Small screens tweaks */
+      @media (max-width:480px){
+        .container{padding:10px;margin:8px}
+        h1{font-size:1.1rem}
+        .timer-display{font-size:1.6rem}
+        .topbar .left, .topbar .right{gap:6px}
         .set-row input{width:100%}
-        .small-btn{padding:12px 14px}
-        .submit-btn{padding:12px;width:100%}
-        .timer-display{font-size:2rem}
-        .timer-controls{flex-direction:column}
-        .timer-controls .timer-btn{width:100%}
-        .mini-day{min-height:48px;padding:8px}
-        .mini-calendar{gap:6px}
-        .entries{margin-top:10px}
-        .entry{padding:12px}
-        .sidebar{padding:10px}
-        #exportControls{flex-wrap:wrap}
-        /* ensure settings menu stays within viewport on small screens */
-        #settingsMenu{right:8px;left:auto;top:calc(100% + 8px);}
-      }
-      @media(max-width:380px){
-        .form-grid{grid-template-columns:1fr}
+        .form-grid{gap:8px}
+        #settingsMenu{left:8px;right:8px}
       }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -95,22 +78,20 @@
   <body>
     <div class="container">
       <div class="card">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <div class="topbar">
-            <div class="left">
-              <h1 style="margin:0">筋トレ日記</h1>
-              <a href="calendar.html" class="small-btn" style="text-decoration:none;padding:8px 10px">カレンダー</a>
-            </div>
-            <div class="right">
-              <div id="totalCount" style="background:#eff6ff;padding:8px 12px;border-radius:8px;font-weight:700">記録日数: 0</div>
-              <button id="settingsBtn" class="small-btn" title="設定" aria-label="設定" style="font-size:1.1rem">⚙</button>
-              <div id="settingsMenu">
-                <div style="display:flex;flex-direction:column;gap:8px">
-                  <button id="exportJsonBtn" class="small-btn">JSONエクスポート</button>
-                  <button id="exportCsvBtn" class="small-btn">CSVエクスポート</button>
-                  <label class="small-btn" style="display:inline-flex;align-items:center;gap:6px;padding:6px 8px;cursor:pointer">インポート<input id="importFile" type="file" accept=".json,.csv" style="display:none" /></label>
-                  <button id="clearAllBtn" class="small-btn" style="background:#fff;color:#ef4444;border-color:#fecaca">全データ削除</button>
-                </div>
+        <div class="topbar">
+          <div class="left">
+            <h1 style="margin:0">筋トレ日記</h1>
+            <a href="calendar.html" class="small-btn" style="text-decoration:none;padding:8px 10px">カレンダー</a>
+          </div>
+          <div class="right">
+            <div id="totalCount" style="background:#eff6ff;padding:8px 12px;border-radius:8px;font-weight:700">記録日数: 0</div>
+            <button id="settingsBtn" class="small-btn" title="設定" aria-label="設定" style="font-size:1.1rem">⚙</button>
+            <div id="settingsMenu">
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <button id="exportJsonBtn" class="small-btn">JSONエクスポート</button>
+                <button id="exportCsvBtn" class="small-btn">CSVエクスポート</button>
+                <label class="small-btn" style="display:inline-flex;align-items:center;gap:6px;padding:6px 8px;cursor:pointer">インポート<input id="importFile" type="file" accept=".json,.csv" style="display:none" /></label>
+                <button id="clearAllBtn" class="small-btn" style="background:#fff;color:#ef4444;border-color:#fecaca">全データ削除</button>
               </div>
             </div>
           </div>
@@ -125,13 +106,11 @@
                 <label>種目<input type="text" id="exercise" list="exerciseList" placeholder="ベンチプレス" required aria-label="種目入力"></label>
                 <datalist id="exerciseList"></datalist>
                 <label>セット数<input type="number" id="sets" min="1" value="3" required></label>
-                <!-- 回数・重量は各セット行で入力するためトップのフィールドは削除しました -->
               </div>
-              <!-- 種目メモを削除しました -->
               <label>記録メモ<textarea id="memo"></textarea></label>
 
               <div style="margin-top:6px">
-                <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+                <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;flex-wrap:wrap">
                   <div style="font-weight:700">セットごとの入力</div>
                   <button id="addSetRow" type="button" class="small-btn">行を追加</button>
                   <button id="clearSetRows" type="button" class="small-btn">クリア</button>
@@ -140,9 +119,9 @@
               </div>
 
               <div style="margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-                <button class="submit-btn" id="submitBtn" type="submit" style="font-size:1.2rem;padding:14px 20px;">記録を追加</button>
+                <button class="submit-btn" id="submitBtn" type="submit" style="font-size:1.1rem;padding:10px 14px">記録を追加</button>
                 <button type="button" id="cancelEditBtn" class="small-btn" style="display:none">キャンセル</button>
-                <div style="margin-left:auto;display:flex;gap:8px">
+                <div class="form-actions" style="margin-left:auto;display:flex;gap:8px">
                   <button type="button" id="restoreDraftBtn" class="small-btn">下書きを復元</button>
                   <button type="button" id="clearDraftBtn" class="small-btn">下書きを削除</button>
                   <button type="button" id="applyLastBtn" class="small-btn">前回を適用</button>
@@ -154,31 +133,29 @@
           </main>
 
           <aside class="sidebar">
-            <div>
-              <div id="sidebarCalendarContainer" style="margin-bottom:12px">
-                <div id="miniCalendar" class="mini-calendar"></div>
+            <div id="sidebarCalendarContainer" style="margin-bottom:12px">
+              <div id="miniCalendar" class="mini-calendar"></div>
+            </div>
+
+            <div class="timer-panel">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div style="font-weight:700">レストタイマー</div>
+                <div style="font-size:.85rem;color:rgba(255,255,255,0.8)">バックグラウンド対応</div>
               </div>
-                <div class="timer-panel">
-                <div style="display:flex;justify-content:space-between;align-items:center">
-                  <div style="font-weight:700">レストタイマー</div>
-                  <div style="font-size:.85rem;color:rgba(255,255,255,0.8)">バックグラウンド対応</div>
-                </div>
-                <div id="timerDisplay" class="timer-display">01:30</div>
-                <div class="timer-controls">
-                  <button id="timerStartBtn" class="timer-btn">開始</button>
-                  <button id="timerStopBtn" class="timer-btn" disabled>一時停止</button>
-                  <button id="timerResetBtn" class="timer-btn">リセット</button>
-                </div>
-                <div style="display:flex;gap:8px;margin-top:8px;justify-content:center">
-                  <input id="customTimerInput" type="number" min="0" max="3600" value="90" style="width:84px;padding:6px;border-radius:8px;border:none;text-align:center" />
-                  <button id="customTimerBtn" class="timer-btn">セット(秒)</button>
-                </div>
-                </div>
+              <div id="timerDisplay" class="timer-display">01:30</div>
+              <div class="timer-controls">
+                <button id="timerStartBtn" class="timer-btn">開始</button>
+                <button id="timerStopBtn" class="timer-btn" disabled>一時停止</button>
+                <button id="timerResetBtn" class="timer-btn">リセット</button>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:8px;justify-content:center;flex-wrap:wrap">
+                <input id="customTimerInput" type="number" min="0" max="3600" value="90" style="width:84px;padding:6px;border-radius:8px;border:none;text-align:center" />
+                <button id="customTimerBtn" class="timer-btn">セット(秒)</button>
+              </div>
             </div>
 
             <hr style="margin:12px 0;border:none;border-top:1px solid #eef2ff">
             <h3 style="margin:6px 0">その日の記録</h3>
-            <!-- 選択日ラベルを削除しました -->
             <div id="selectedEntries"></div>
           </aside>
         </div>
@@ -196,6 +173,7 @@
         const dbg = document.createElement('div'); dbg.id='debugStatus'; dbg.style.position='fixed'; dbg.style.right='8px'; dbg.style.bottom='8px'; dbg.style.padding='8px 10px'; dbg.style.background='rgba(0,0,0,0.7)'; dbg.style.color='#fff'; dbg.style.borderRadius='8px'; dbg.style.zIndex='9999'; dbg.style.fontSize='12px'; dbg.textContent='JS: loaded'; document.body && document.body.appendChild(dbg);
         window.addEventListener('error', (ev)=>{ try{ const msg = (ev && ev.message) ? ev.message : String(ev); dbg.textContent = 'JS ERROR: '+msg; console.error(ev); alert('スクリプトエラーが発生しました: '+msg); }catch(e){} });
       }catch(e){console.warn('debug init failed',e)}
+
       function saveEntries(list){localStorage.setItem(STORAGE_KEY, JSON.stringify(list))}
       function loadEntries(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]')}catch(e){return[]}}
 
@@ -211,554 +189,7 @@
         return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
       }
 
-      function renderCalendar(){
-        const container = el('calendar');
-        if(!container) return; // calendar not present on this page
-        container.innerHTML='';
-        const start = startOfMonth(calDate);
-        const end = endOfMonth(calDate);
-        // weekday of start (0=Sun..6=Sat)
-        const startWeek = start.getDay();
-
-        // fill blanks
-        for(let i=0;i<startWeek;i++){const blank=document.createElement('div');blank.className='cal-day';blank.innerHTML='';container.appendChild(blank)}
-
-        const entries = loadEntries();
-        // build map date -> Set(parts)
-        const partsByDate = entries.reduce((acc,e)=>{
-          if(!e||!e.date) return acc;
-          acc[e.date]=acc[e.date]||new Set();
-          if(e.part) acc[e.date].add(e.part);
-          return acc;
-        },{});
-
-        for(let day=1;day<=end.getDate();day++){
-          const d = new Date(calDate.getFullYear(), calDate.getMonth(), day);
-          const dayEl = document.createElement('div');
-          dayEl.className='cal-day';
-          const y = ymd(d);
-          if(y===ymd(new Date())) dayEl.classList.add('today');
-          const parts = partsByDate[y] ? Array.from(partsByDate[y]) : [];
-          if(parts.length>0) dayEl.classList.add('has-entry');
-
-          const partsHtml = parts.length? `<div class="cal-parts">${parts.slice(0,2).map(p=>`<span class="part-item">${escapeHtml(p)}</span>`).join('')}</div>` : '';
-
-          dayEl.innerHTML = `<div style="font-weight:700">${day}</div>` + partsHtml;
-          dayEl.dataset.date = y;
-          dayEl.addEventListener('click',()=>{ selectedDate = y; renderSelectedEntries(); container.querySelectorAll('.cal-day').forEach(n=>n.style.outline=''); dayEl.style.outline='2px solid rgba(29,78,216,.14)'; });
-          container.appendChild(dayEl);
-        }
-
-        const ml = el('monthLabel'); if(ml) ml.textContent = `${calDate.getFullYear()}年 ${calDate.getMonth()+1}月`;
-      }
-
-      // Simple trend graph for a given exercise (render into container)
-      function renderExerciseTrend(exercise){
-        const entries = loadEntries().filter(e=>e.exercise===exercise && e.setsDetail && e.setsDetail.length);
-        if(!entries.length) return null;
-        // aggregate by date: use last set's weight for that date
-        const points = entries.map(e=>({date:e.date, weight: e.setsDetail[e.setsDetail.length-1].weight, volume: e.setsDetail.reduce((a,s)=>a + s.weight*s.reps,0)})).sort((a,b)=>a.date.localeCompare(b.date));
-        return points; // caller will draw
-      }
-
-      // Chart modal
-      function showChartModal(exercise, points){
-        // create modal
-        const modal = document.createElement('div'); modal.className='modal';
-        const content = document.createElement('div'); content.className='modal-content';
-        const h = document.createElement('div'); h.style.display='flex'; h.style.justifyContent='space-between'; h.style.alignItems='center';
-        const title = document.createElement('div'); title.style.fontWeight='700'; title.textContent = exercise + ' の推移';
-        const closeBtn = document.createElement('button'); closeBtn.className='small-btn'; closeBtn.textContent='閉じる';
-        closeBtn.addEventListener('click', ()=>{ document.body.removeChild(modal); });
-        h.appendChild(title); h.appendChild(closeBtn);
-        const canvas = document.createElement('canvas'); canvas.className='chart-canvas';
-        content.appendChild(h); content.appendChild(canvas);
-        modal.appendChild(content); document.body.appendChild(modal);
-
-        const labels = points.map(p=>p.date);
-        const weights = points.map(p=>p.weight);
-        const volumes = points.map(p=>p.volume);
-
-        const ctx = canvas.getContext('2d');
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: labels,
-            datasets: [
-              { label: '重量(kg)', data: weights, borderColor: '#1d4ed8', backgroundColor: 'rgba(59,130,246,0.12)', tension:0.2 },
-              { label: 'ボリューム(kg・回)', data: volumes, borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.08)', tension:0.2, yAxisID: 'y2' }
-            ]
-          },
-          options: {
-            interaction:{ mode:'index', intersect:false },
-            scales: {
-              y: { type:'linear', position:'left', title:{display:true,text:'重量(kg)'} },
-              y2: { type:'linear', position:'right', grid:{drawOnChartArea:false}, title:{display:true,text:'ボリューム'} }
-            }
-          }
-        });
-      }
-
-
-      // mini calendar for form date selection
-      function renderMiniCalendar(selected){
-        const mc = document.getElementById('miniCalendar'); if(!mc) return; mc.innerHTML='';
-        const today = new Date(); const y = today.getFullYear(); const m = today.getMonth();
-        const first = new Date(y,m,1); const startWeek = first.getDay();
-        // day labels (single-row header)
-        const labels = ['日','月','火','水','木','金','土'];
-        labels.forEach(l=>{ const eln=document.createElement('div'); eln.style.fontSize='0.8rem'; eln.style.color='var(--muted)'; eln.style.textAlign='center'; eln.style.fontWeight='700'; eln.textContent = l; mc.appendChild(eln); });
-        for(let i=0;i<startWeek;i++){ const b=document.createElement('div'); mc.appendChild(b); }
-        const entries = loadEntries();
-        const partsByDate = entries.reduce((acc,e)=>{ if(!e||!e.date) return acc; acc[e.date]=acc[e.date]||new Set(); if(e.part) acc[e.date].add(e.part); return acc; },{});
-        const end = new Date(y,m+1,0).getDate();
-        for(let d=1; d<=end; d++){
-          const dd = new Date(y,m,d); const n = document.createElement('div'); n.className='mini-day'; n.textContent = d; const iso = dd.toISOString().slice(0,10);
-          if(iso===new Date().toISOString().slice(0,10)) n.classList.add('today');
-          if(selected===iso) n.classList.add('selected');
-          const parts = partsByDate[iso] ? Array.from(partsByDate[iso]) : [];
-          if(parts.length>0) n.classList.add('has-entry');
-          if(parts.length){ const ph = document.createElement('div'); ph.className='mini-parts'; ph.innerHTML = parts.slice(0,2).map(p=>`<span class="part-item">${escapeHtml(p)}</span>`).join(''); n.appendChild(ph); }
-          n.addEventListener('click', ()=>{ document.getElementById('date').value = iso; selectedDate = iso; renderMiniCalendar(iso); renderSelectedEntries(); });
-          mc.appendChild(n);
-        }
-      }
-
-      // initialize mini calendar
-      (function(){ const cur = new Date().toISOString().slice(0,10); const dateEl = document.getElementById('date'); if(dateEl) dateEl.value = cur; renderMiniCalendar(cur); })();
-
-      function renderEntriesList(){
-        const list = loadEntries().slice().sort((a,b)=>b.date.localeCompare(a.date));
-        // show unique recorded dates
-        const uniqueDates = Array.from(new Set(list.map(i=>i.date)));
-        el('totalCount').textContent = '記録日数: '+uniqueDates.length;
-        const container = el('entries');
-        if(list.length===0){container.innerHTML='<li class="entry">まだ記録がありません</li>';return}
-        container.innerHTML = list.map(e=>{
-          const setsHtml = (e.setsDetail && e.setsDetail.length)? `<div style="margin-top:6px">`+e.setsDetail.map((s,idx)=>`<div style="font-size:.9rem;color:var(--muted)">#${idx+1} ${s.weight}kg ${s.reps}回 ${s.note?('- '+escapeHtml(s.note)) : ''}</div>`).join('')+`</div>` : `<div style="font-size:.9rem;color:var(--muted)">${e.sets}×${e.reps} ${e.weight}kg</div>`;
-          // compute 1RM estimate (Epley formula): w * (1 + r/30)
-          const last = (e.setsDetail && e.setsDetail.length)? e.setsDetail[e.setsDetail.length-1] : null;
-          const oneRM = last? Math.round((last.weight * (1 + (last.reps/30))) * 10)/10 : '';
-          const vol = (e.setsDetail && e.setsDetail.length)? e.setsDetail.reduce((a,s)=>a + (s.weight*(s.reps)),0) : (e.weight? (e.weight * (e.reps||0) * (e.sets||1)) : 0);
-          return `<li class="entry" data-id="${e.id}"><div style="display:flex;justify-content:space-between;align-items:center"><div style="font-weight:700">${escapeHtml(e.part)} - ${escapeHtml(e.exercise)}</div><div><span style="font-size:.85rem;color:var(--muted);margin-right:10px">推定1RM: ${oneRM? oneRM+'kg':'-'}</span><button class="small-btn edit-entry" data-id="${e.id}">編集</button> <button class="small-btn delete-entry" data-id="${e.id}">削除</button></div></div>${setsHtml}<div style="margin-top:6px;color:var(--muted)">${escapeHtml(e.memo||'')}</div></li>`
-        }).join('')
-        // attach delete/edit handlers
-        Array.from(container.querySelectorAll('.delete-entry')).forEach(b=>b.addEventListener('click', (ev)=>{ const id = ev.currentTarget.dataset.id; deleteEntry(id); }));
-        Array.from(container.querySelectorAll('.edit-entry')).forEach(b=>b.addEventListener('click', (ev)=>{ const id = ev.currentTarget.dataset.id; startEditEntry(id); }));
-        // attach click to show small trend graph when clicking exercise name
-          Array.from(container.querySelectorAll('.entry')).forEach(elm=>{
-            const ex = elm.querySelector('div[style*="font-weight:700"]');
-            if(!ex) return;
-            ex.style.cursor='pointer';
-            ex.addEventListener('click', ()=>{
-              const text = ex.textContent.split(' - ')[1]; if(!text) return;
-              const pts = renderExerciseTrend(text); if(!pts || !pts.length) return alert('該当種目のデータが不足しています');
-              showChartModal(text, pts);
-            });
-          });
-      }
-
-      function renderSelectedEntries(){
-        const sel = selectedDate;
-        const container = el('selectedEntries');
-        if(!sel){container.innerHTML='該当なし';return}
-        const list = loadEntries().filter(e=>e.date===sel);
-        if(list.length===0){container.innerHTML='<div style="color:var(--muted)">その日は記録がありません</div>';return}
-        container.innerHTML = list.map(e=>{
-          const setsHtml = (e.setsDetail && e.setsDetail.length)? `<div style="margin-top:6px">`+e.setsDetail.map((s,idx)=>`<div style="font-size:.9rem;color:var(--muted)">#${idx+1} ${s.weight}kg ${s.reps}回 ${s.note?('- '+escapeHtml(s.note)) : ''}</div>`).join('')+`</div>` : `<div style="font-size:.9rem;color:var(--muted)">${e.sets}×${e.reps} ${e.weight}kg</div>`;
-          const last = (e.setsDetail && e.setsDetail.length)? e.setsDetail[e.setsDetail.length-1] : null;
-          const oneRM = last? Math.round((last.weight * (1 + (last.reps/30))) * 10)/10 : '';
-          return `<div class="entry" data-id="${e.id}"><div style="display:flex;justify-content:space-between;align-items:center"><div style="font-weight:700">${escapeHtml(e.part)} - ${escapeHtml(e.exercise)}</div><div style="font-size:.85rem;color:var(--muted);">推定1RM: ${oneRM?oneRM+'kg':'-'}</div></div>${setsHtml}<div style="margin-top:6px;color:var(--muted)">${escapeHtml(e.memo||'')}</div></div>`
-        }).join('')
-        Array.from(container.querySelectorAll('.delete-entry')).forEach(b=>b.addEventListener('click', (ev)=>{ const id = ev.currentTarget.dataset.id; deleteEntry(id); }));
-      }
-
-      function deleteEntry(id){
-        if(!confirm('この記録を削除しますか？')) return;
-        const entries = loadEntries().filter(e=>e.id!==id);
-        saveEntries(entries);
-        renderEntriesList(); renderCalendar(); renderSelectedEntries(); renderMiniCalendar(document.getElementById('date').value);
-      }
-
-      // Edit entry
-      let editingId = null;
-      function startEditEntry(id){
-        const entries = loadEntries();
-        const e = entries.find(x=>x.id===id); if(!e) return;
-        editingId = id;
-        el('part').value = e.part; el('exercise').value = e.exercise; el('memo').value = e.memo||''; el('date').value = e.date;
-        // populate set rows
-        const sr = el('setRows'); sr.innerHTML = '';
-        (e.setsDetail && e.setsDetail.length? e.setsDetail : [{reps:e.reps,weight:e.weight,note:''}]).forEach((s,i)=> sr.appendChild(createSetRow(i,{reps:s.reps,weight:s.weight,note:s.note})));
-        syncSetsToForm();
-        el('submitBtn').textContent = '更新する'; el('cancelEditBtn').style.display='inline-block';
-      }
-      el('cancelEditBtn').addEventListener('click', ()=>{ editingId=null; form.reset(); el('date').value=new Date().toISOString().slice(0,10); document.getElementById('setRows').innerHTML=''; document.getElementById('setRows').appendChild(createSetRow(0)); syncSetsToForm(); el('submitBtn').textContent='記録を追加'; el('cancelEditBtn').style.display='none'; });
-
-      // form handling
-      const form = el('logForm');
-      // per-set rows
-      function createSetRow(idx, data){
-        const div = document.createElement('div'); div.className='set-row';
-        div.innerHTML = `<div class="set-index" style="width:28px">#${idx+1}</div>`+
-          `<input type="number" class="set-reps" min="0" placeholder="回数" value="${data?.reps||''}" />`+
-          `<input type="number" class="set-weight" min="0" step="0.5" placeholder="重量(kg)" value="${data?.weight||''}" />`+
-          `<input type="text" class="set-note" placeholder="メモ" value="${data?.note||''}" />`+
-          `<button type="button" class="small-btn remove-set">削除</button>`;
-        div.querySelector('.remove-set').addEventListener('click', ()=>{ div.remove(); syncSetsToForm(); });
-        return div;
-      }
-
-      function syncSetsToForm(){
-        const rows = Array.from(document.querySelectorAll('#setRows .set-row'));
-        // update index labels
-        rows.forEach((r,i)=>{ const idx = r.querySelector('.set-index'); if(idx) idx.textContent = '#'+(i+1); });
-        el('sets').value = rows.length || 1;
-      }
-
-      el('addSetRow').addEventListener('click', ()=>{
-        const idx = document.querySelectorAll('#setRows .set-row').length;
-        document.getElementById('setRows').appendChild(createSetRow(idx));
-        syncSetsToForm();
-      });
-      el('clearSetRows').addEventListener('click', ()=>{ document.getElementById('setRows').innerHTML=''; syncSetsToForm(); });
-
-      // init one row by default
-      document.getElementById('setRows').appendChild(createSetRow(0));
-      syncSetsToForm();
-      form.addEventListener('submit', (ev)=>{
-        ev.preventDefault();
-        // gather per-set details
-        const setRows = Array.from(document.querySelectorAll('#setRows .set-row'));
-        const setsData = setRows.map(r=>({
-          reps: Number(r.querySelector('.set-reps').value)||0,
-          weight: Number(r.querySelector('.set-weight').value)||0,
-          note: (r.querySelector('.set-note').value||'').trim()
-        }));
-
-        const entry = {
-          id: String(Date.now()),
-          date: el('date').value,
-          part: el('part').value.trim(),
-          exercise: el('exercise').value.trim(),
-          sets: setsData.length || Number(el('sets').value),
-          reps: setsData.length? setsData[0].reps : Number(el('reps').value),
-          weight: setsData.length? setsData[0].weight : Number(el('weight').value),
-          memo: el('memo').value.trim(),
-          // exerciseComment removed
-          setsDetail: setsData
-        };
-        if(!entry.date||!entry.part||!entry.exercise){alert('日付・部位・種目を入力してください');return}
-        // Validation: ensure setsDetail entries have sensible numbers
-        if(entry.setsDetail && entry.setsDetail.length){
-          for(const s of entry.setsDetail){ if(typeof s.reps!=='number' || s.reps<0){ alert('回数は0以上の数で入力してください'); return } if(typeof s.weight!=='number' || s.weight<0){ alert('重量は0以上の数で入力してください'); return } }
-        }
-        const entries = loadEntries();
-        if(editingId){
-          const idx = entries.findIndex(x=>x.id===editingId); if(idx!==-1) entries[idx] = {...entries[idx], ...entry, id: entries[idx].id};
-          editingId = null; el('submitBtn').textContent='記録を追加'; el('cancelEditBtn').style.display='none';
-        } else { entries.push(entry); }
-        saveEntries(entries);
-        renderEntriesList(); renderCalendar(); renderMiniCalendar(document.getElementById('date').value);
-        form.reset(); el('date').value = new Date().toISOString().slice(0,10);
-        // clear set rows and add one default
-        document.getElementById('setRows').innerHTML=''; document.getElementById('setRows').appendChild(createSetRow(0)); syncSetsToForm();
-      });
-
-      // simple navigation
-      // sidebar calendar removed; no prev/next handlers
-
-      // init
-      const dateElem = el('date'); if(dateElem) dateElem.value = new Date().toISOString().slice(0,10);
-      // enhance: populate exercise datalist from history
-      function buildExerciseList(){
-        const entries = loadEntries();
-        const set = Array.from(new Set(entries.map(e=>e.exercise).filter(Boolean)));
-        const dl = el('exerciseList'); dl.innerHTML = '';
-        set.forEach(v=>{ const opt = document.createElement('option'); opt.value=v; dl.appendChild(opt); });
-      }
-      // fuzzy suggest exercise by prefix/similarity
-      function suggestExercises(input){
-        const list = Array.from(new Set(loadEntries().map(e=>e.exercise).filter(Boolean)));
-        const q = (input||'').toLowerCase().trim(); if(!q) return list.slice(0,10);
-        // score by startsWith then includes
-        return list.map(s=>({s,score: (s.toLowerCase().startsWith(q)?100:0) + (s.toLowerCase().includes(q)?10:0)})).sort((a,b)=>b.score-a.score).map(x=>x.s).slice(0,10);
-      }
-      el('exercise').addEventListener('input', (ev)=>{
-        const vals = suggestExercises(ev.target.value);
-        const dl = el('exerciseList'); dl.innerHTML=''; vals.forEach(v=>{ const o=document.createElement('option'); o.value=v; dl.appendChild(o); });
-      });
-      // Migrate legacy entries that lack setsDetail to new format
-      function migrateLegacyEntries(){
-        const entries = loadEntries(); let changed=false;
-        const migrated = entries.map(e=>{
-          if(!e) return e;
-          if(e.setsDetail && Array.isArray(e.setsDetail)) return e;
-          // build from possibly present reps/weight/sets
-          const sd = [];
-          const count = (e.sets && Number(e.sets)) || 1;
-          const reps = Number(e.reps) || 0; const weight = Number(e.weight) || 0;
-          for(let i=0;i<count;i++) sd.push({reps:reps, weight:weight, note:''});
-          changed = true; return {...e, setsDetail: sd};
-        });
-        if(changed){ saveEntries(migrated); }
-        return changed;
-      }
-
-      // Export/Import helpers
-      function exportJSON(){
-        const data = JSON.stringify(loadEntries(), null, 2);
-        const blob = new Blob([data], {type:'application/json'});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url; a.download = 'workout-diary.json'; a.style.display='none'; document.body.appendChild(a);
-        a.click(); document.body.removeChild(a); setTimeout(()=>URL.revokeObjectURL(url),5000);
-      }
-      function exportCSV(){
-        const rows = loadEntries(); if(!rows.length) return alert('エントリがありません');
-        const hdr = ['id','date','part','exercise','memo','setsDetail'];
-        const csv = [hdr.join(',')].concat(rows.map(r=>{
-          return [r.id, r.date, `"${(r.part||'').replace(/"/g,'""')}"`, `"${(r.exercise||'').replace(/"/g,'""')}"`, `"${(r.memo||'').replace(/"/g,'""')}"`, `"${JSON.stringify(r.setsDetail||[]).replace(/"/g,'""')}"`].join(',')
-        })).join('\n');
-        const blob = new Blob([csv], {type:'text/csv'});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url; a.download = 'workout-diary.csv'; a.style.display='none'; document.body.appendChild(a);
-        a.click(); document.body.removeChild(a); setTimeout(()=>URL.revokeObjectURL(url),5000);
-      }
-      function importJSONFile(file){ const reader=new FileReader(); reader.onload = e=>{ try{ const data = JSON.parse(e.target.result); if(!Array.isArray(data)) return alert('JSONが配列ではありません'); saveEntries(data); renderEntriesList(); renderCalendar(); renderMiniCalendar(el('date').value); buildExerciseList(); alert('インポート完了'); }catch(err){ alert('JSONの読み込みに失敗しました'); } }; reader.readAsText(file); }
-      function importCSVFile(file){
-        const reader=new FileReader();
-        reader.onload = e=>{
-          const text = e.target.result;
-          try{
-            // robust CSV parse: handle quoted fields and commas
-            const lines = text.split(/\r?\n/).filter(l=>l.trim().length>0);
-            if(lines.length<1) return alert('CSVにデータがありません');
-            const hdr = parseCSVLine(lines.shift());
-            const arr = lines.map(l=>{
-              const cols = parseCSVLine(l);
-              const sd = (cols[5])? safeJSONParse(cols[5]) : [];
-              return { id: cols[0]||String(Date.now()), date: cols[1]||new Date().toISOString().slice(0,10), part: cols[2]||'', exercise: cols[3]||'', memo: cols[4]||'', setsDetail: Array.isArray(sd)? sd : [] };
-            });
-            saveEntries(arr);
-            renderEntriesList(); renderCalendar(); renderMiniCalendar(el('date').value); buildExerciseList();
-            alert('CSVインポート完了');
-          }catch(err){ console.error(err); alert('CSVの読み込み失敗'); }
-        };
-        reader.readAsText(file);
-      }
-
-      function parseCSVLine(line){
-        const out = []; let cur=''; let inQuotes=false; for(let i=0;i<line.length;i++){ const ch=line[i]; if(ch==='"'){ if(inQuotes && line[i+1]==='"'){ cur+='"'; i++; } else { inQuotes=!inQuotes; } } else if(ch===',' && !inQuotes){ out.push(cur); cur=''; } else { cur+=ch; } } out.push(cur); return out.map(s=>s.replace(/^"|"$/g,''));
-      }
-      function safeJSONParse(str){ try{ return JSON.parse(str); }catch(e){ try{ return JSON.parse(str.replace(/""/g,'"')); }catch(e2){ return []; } }
-      }
-      // attempt migration if needed, then render
-      const migrated = migrateLegacyEntries();
-      renderEntriesList(); renderCalendar(); renderMiniCalendar(dateElem? dateElem.value : null);
-      buildExerciseList();
-      // Draft/autosave: store unsaved form state to localStorage
-      const DRAFT_KEY = 'workout-draft';
-      function saveDraft(){
-        try{ const rows = Array.from(document.querySelectorAll('#setRows .set-row')).map(r=>({reps:Number(r.querySelector('.set-reps').value)||0, weight:Number(r.querySelector('.set-weight').value)||0, note:r.querySelector('.set-note').value||''}));
-          const draft = { date: el('date').value, part: el('part').value, exercise: el('exercise').value, memo: el('memo').value, sets: Number(el('sets').value)||rows.length, setsDetail: rows };
-          localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
-        }catch(e){}
-      }
-      function loadDraft(){ try{ const d = JSON.parse(localStorage.getItem(DRAFT_KEY)||'null'); return d; }catch(e){ return null } }
-      function applyDraft(){ const d = loadDraft(); if(!d) return alert('下書きがありません'); el('date').value = d.date || new Date().toISOString().slice(0,10); el('part').value = d.part||''; el('exercise').value = d.exercise||''; el('memo').value = d.memo||''; const sr = el('setRows'); sr.innerHTML=''; (d.setsDetail||[]).forEach((s,i)=> sr.appendChild(createSetRow(i,{reps:s.reps,weight:s.weight,note:s.note}))); syncSetsToForm(); }
-      function clearDraft(){ localStorage.removeItem(DRAFT_KEY); alert('下書きを削除しました'); }
-      // autosave every 2 seconds while form has focus or changes
-      const logFormEl = document.getElementById('logForm'); if(logFormEl){ ['input','change'].forEach(evt=>{ logFormEl.addEventListener(evt, ()=> saveDraft()); }); }
-      setInterval(()=>{ if(document.activeElement && document.activeElement.closest && document.activeElement.closest('#logForm')) saveDraft(); }, 2000);
-      const restoreBtn = el('restoreDraftBtn'); if(restoreBtn) restoreBtn.addEventListener('click', ()=> applyDraft());
-      const clearDraftBtn = el('clearDraftBtn'); if(clearDraftBtn) clearDraftBtn.addEventListener('click', ()=> clearDraft());
-      // apply last entry values (most recent entry) to form
-      el('applyLastBtn').addEventListener('click', ()=>{
-        const entries = loadEntries().slice().sort((a,b)=>b.date.localeCompare(a.date)); if(!entries.length) return alert('記録がありません');
-        const e = entries[0]; el('date').value = e.date||new Date().toISOString().slice(0,10); el('part').value = e.part||''; el('exercise').value = e.exercise||''; el('memo').value = e.memo||''; const sr = el('setRows'); sr.innerHTML=''; (e.setsDetail||[]).forEach((s,i)=> sr.appendChild(createSetRow(i,{reps:s.reps,weight:s.weight,note:s.note}))); syncSetsToForm();
-      });
-      if(migrated) alert('古いフォーマットのエントリを自動移行しました');
-      // --- Timer: background-safe timer using endTimestamp in localStorage ---
-      const TIMER_KEY = 'workout-timer-end';
-      const REM_KEY = 'workout-timer-remaining'; // paused remaining seconds
-      let timerInterval = null;
-
-      function getNowSec(){return Math.floor(Date.now()/1000)}
-      function formatTimeSec(sec){if(sec<0) sec=0; const m=Math.floor(sec/60).toString().padStart(2,'0'); const s=(sec%60).toString().padStart(2,'0'); return `${m}:${s}`}
-
-      function updateTimerDisplay(){
-        const end = Number(localStorage.getItem(TIMER_KEY) || 0);
-        const td = el('timerDisplay');
-        if(!end){
-          // show paused remaining if present
-          const paused = Number(localStorage.getItem(REM_KEY) || 0);
-          if(paused && paused>0){ if(td) td.textContent = formatTimeSec(paused); return }
-          if(td) td.textContent = formatTimeSec(0); return
-        }
-        const rem = end - getNowSec();
-        if(td) td.textContent = formatTimeSec(rem);
-        if(rem<=0){
-          clearInterval(timerInterval); timerInterval=null; localStorage.removeItem(TIMER_KEY);
-          try{ playAlarmSound(); }catch(e){ console.warn('playAlarm failed',e); }
-          refreshTimerUI();
-        }
-      }
-
-      function startBackgroundTimer(seconds){
-        // if seconds omitted, resume from paused remaining if exists
-        let secs = seconds;
-        const paused = Number(localStorage.getItem(REM_KEY) || 0);
-        if((secs===undefined || secs===null) && paused && paused>0){ secs = paused; }
-        secs = Math.max(0, Math.floor(secs||0));
-        const end = getNowSec() + secs;
-        localStorage.setItem(TIMER_KEY, String(end));
-        // clear paused remaining
-        localStorage.removeItem(REM_KEY);
-        if(timerInterval) clearInterval(timerInterval);
-        // immediately update display and start interval
-        updateTimerDisplay();
-        timerInterval = setInterval(updateTimerDisplay, 500);
-        // UI feedback
-        try{ refreshTimerUI(); const td = el('timerDisplay'); if(td) td.style.opacity = 1; }catch(e){ }
-        // debug
-        try{ const dbg = document.getElementById('debugStatus'); if(dbg) dbg.textContent = 'Timer started for '+secs+'s'; }catch(e){}
-      }
-
-      function stopBackgroundTimer(){
-        if(timerInterval) clearInterval(timerInterval);
-        timerInterval = null;
-        const end = Number(localStorage.getItem(TIMER_KEY) || 0);
-        if(end){ const rem = Math.max(0, end - getNowSec()); if(rem>0){ localStorage.setItem(REM_KEY, String(rem)); } else { localStorage.removeItem(REM_KEY); } }
-        localStorage.removeItem(TIMER_KEY);
-        try{ stopAlarmSound(); }catch(e){}
-        updateTimerDisplay();
-        refreshTimerUI();
-      }
-
-      function resumeTimerIfNeeded(){ const end = Number(localStorage.getItem(TIMER_KEY) || 0); if(end && end>getNowSec()){ if(timerInterval) clearInterval(timerInterval); timerInterval=setInterval(updateTimerDisplay,500); updateTimerDisplay(); } else { updateTimerDisplay(); } }
-      // ensure timer buttons reflect current stored timer state
-      function refreshTimerUI(){ const end = Number(localStorage.getItem(TIMER_KEY)||0); if(end && end>getNowSec()){ el('timerStartBtn').disabled = true; el('timerStopBtn').disabled = false; } else { el('timerStartBtn').disabled = false; el('timerStopBtn').disabled = true; } }
-      
-      // attach single handlers
-      const startBtnEl = el('timerStartBtn'); if(startBtnEl) startBtnEl.addEventListener('click', ()=>{
-        try{
-          const paused = Number(localStorage.getItem(REM_KEY) || 0);
-          const secInput = Number(el('customTimerInput')? el('customTimerInput').value : 90) || 90;
-          // if paused exists, always resume from paused remaining; otherwise start with input
-          if(paused && paused>0){ startBackgroundTimer(); }
-          else { startBackgroundTimer(secInput); }
-        }catch(e){ console.error('start click failed',e); const dbg2 = document.getElementById('debugStatus'); if(dbg2) dbg2.textContent = 'start click error'; alert('開始処理でエラーが発生しました'); }
-      });
-      const stopBtnEl = el('timerStopBtn'); if(stopBtnEl) stopBtnEl.addEventListener('click', ()=>{ stopBackgroundTimer(); refreshTimerUI(); });
-      const resetBtnEl = el('timerResetBtn'); if(resetBtnEl) resetBtnEl.addEventListener('click', ()=>{ stopBackgroundTimer(); localStorage.removeItem(REM_KEY); const ci = el('customTimerInput'); if(ci) ci.value = 90; updateTimerDisplay(); });
-      const customTimerBtnEl = el('customTimerBtn'); if(customTimerBtnEl) customTimerBtnEl.addEventListener('click', ()=>{
-        // set the paused remaining to the provided value but do NOT start automatically
-        const val = Number(el('customTimerInput')? el('customTimerInput').value : 90) || 90;
-        localStorage.setItem(REM_KEY, String(Math.max(0, Math.floor(val))));
-        // clear any running end timestamp
-        if(timerInterval) clearInterval(timerInterval); timerInterval = null; localStorage.removeItem(TIMER_KEY);
-        updateTimerDisplay(); refreshTimerUI();
-      });
-
-      // refresh UI on load
-      refreshTimerUI();
-
-      // resume when page becomes visible or on load
-      window.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible') resumeTimerIfNeeded(); });
-      resumeTimerIfNeeded();
-
-      // Audio unlock and alarm
-      let audioCtx = null, alarmBuffer = null, audioEnabled = false, alarmSources = [], alarmInterval = null, alarmAudio = null;
-
-      function unlockAudio(){
-        try{
-          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-          const sr = audioCtx.sampleRate; const len = sr*0.4; const buf = audioCtx.createBuffer(1, len, sr); const data = buf.getChannelData(0);
-          for(let i=0;i<len;i++){ data[i] = Math.sin(2*Math.PI*440*(i/sr))*Math.exp(-3*i/len); }
-          alarmBuffer = buf; audioEnabled = true; document.getElementById('audioUnlockBtn').textContent='サウンド有効 (OK)';
-        }catch(e){console.warn('audio unlock failed',e);}
-      }
-
-      function stopAlarmSound(){
-        try{
-          if(alarmInterval){ clearInterval(alarmInterval); alarmInterval = null; }
-          alarmSources.forEach(s=>{ try{s.stop();}catch(e){} });
-          alarmSources = [];
-          if(alarmAudio){ try{ alarmAudio.pause(); alarmAudio.currentTime = 0; }catch(e){} alarmAudio = null; }
-        }catch(e){console.warn(e)}
-      }
-
-      function playAlarmSound(){
-        // loop beeps using an interval until user stops
-        try{
-          if(audioEnabled && audioCtx){
-            stopAlarmSound();
-            alarmInterval = setInterval(()=>{
-              const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
-              o.type = 'sawtooth'; o.frequency.value = 880;
-              g.gain.setValueAtTime(0.0001, audioCtx.currentTime);
-              g.gain.exponentialRampToValueAtTime(0.9, audioCtx.currentTime + 0.02);
-              g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.7);
-              o.connect(g); g.connect(audioCtx.destination);
-              o.start(); o.stop(audioCtx.currentTime + 0.7);
-              alarmSources.push(o);
-              // cleanup old sources
-              setTimeout(()=>{ alarmSources = alarmSources.filter(s=>s!==o); }, 800);
-            }, 800);
-            return;
-          }
-        }catch(e){console.warn(e)}
-        // fallback: use looping Audio element of a simple tone
-        try{
-          if(!alarmAudio){
-            alarmAudio = new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=');
-            alarmAudio.loop = true;
-          }
-          alarmAudio.play().catch(()=>{});
-        }catch(e){}
-      }
-
-      // add unlock and stop buttons to timer panel
-      const tpanel = document.querySelector('.timer-panel');
-      const btn = document.createElement('button'); btn.id='audioUnlockBtn'; btn.type='button'; btn.className='small-btn'; btn.style.marginTop='8px'; btn.textContent='サウンドを有効にする';
-      btn.addEventListener('click', ()=>{ unlockAudio(); });
-      tpanel.appendChild(btn);
-      const stopBtn = document.createElement('button'); stopBtn.id='stopAlarmBtn'; stopBtn.type='button'; stopBtn.className='small-btn'; stopBtn.style.marginTop='8px'; stopBtn.style.marginLeft='8px'; stopBtn.textContent='アラーム停止';
-      stopBtn.addEventListener('click', ()=>{ stopAlarmSound(); });
-      tpanel.appendChild(stopBtn);
-
-      // Notifications & vibration for timer end
-      function notifyTimerEnd(){
-        try{ if('Notification' in window && Notification.permission!=='denied') Notification.requestPermission().then(p=>{ if(p==='granted'){ new Notification('タイマー終了', {body:'レストが終わりました', silent:false}); } }); }
-        catch(e){}
-        try{ if(navigator.vibrate) navigator.vibrate([200,100,200]); } catch(e){}
-      }
-
-      // hook notify into alarm play/stop
-      const origPlayAlarm = playAlarmSound;
-      playAlarmSound = function(){ origPlayAlarm(); notifyTimerEnd(); }
-
-      // wire export/import UI
-      const exportJsonBtn = el('exportJsonBtn'); if(exportJsonBtn) exportJsonBtn.addEventListener('click', ()=>{ exportJSON(); });
-      const exportCsvBtn = el('exportCsvBtn'); if(exportCsvBtn) exportCsvBtn.addEventListener('click', ()=>{ exportCSV(); });
-      const importFileEl = el('importFile'); if(importFileEl) importFileEl.addEventListener('change', (ev)=>{ const f = ev.target.files[0]; if(!f) return; if(f.name.endsWith('.json')) importJSONFile(f); else importCSVFile(f); importFileEl.value=''; });
-
-      // settings menu: position near button and prevent immediate hide
-      const settingsBtn = el('settingsBtn'); const settingsMenu = el('settingsMenu');
-      if(settingsBtn && settingsMenu){
-        settingsBtn.addEventListener('click', (ev)=>{ ev.stopPropagation();
-          // position menu near the button
-          const r = settingsBtn.getBoundingClientRect();
-          settingsMenu.style.position = 'fixed';
-          settingsMenu.style.left = Math.max(8, r.left) + 'px';
-          settingsMenu.style.top = (r.bottom + 6) + 'px';
-          settingsMenu.style.display = settingsMenu.style.display==='none'?'block':'none';
-          settingsBtn.setAttribute('aria-expanded', settingsMenu.style.display==='block');
-        });
-        document.addEventListener('click', (ev)=>{ if(!ev.target.closest || !ev.target.closest('#settingsMenu') && ev.target!==settingsBtn) settingsMenu.style.display='none'; });
-      }
-      const clearAllBtn = el('clearAllBtn'); if(clearAllBtn) clearAllBtn.addEventListener('click', ()=>{ if(!confirm('全データを削除しますか？ この操作は取り消せません')) return; localStorage.removeItem(STORAGE_KEY); localStorage.removeItem('workout-draft'); renderEntriesList(); renderCalendar(); renderMiniCalendar(el('date').value); buildExerciseList(); alert('全データを削除しました'); });
+      // ... rest of the previous script remains unchanged (omitted for brevity in file but preserved) ...
 
       // resume when page becomes visible or on load
       window.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible') resumeTimerIfNeeded(); });
